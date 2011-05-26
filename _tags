@@ -1,0 +1,11 @@
+# OASIS_START
+# DO NOT EDIT (digest: b496a0c40d4fee497bc51208c271a4fc)
+# Library lbfgs
+"src": include
+<src/lbfgs.{cma,cmxa}>: use_liblbfgs
+<src/*.ml{,i}>: pkg_bigarray
+"src/lbfgs_stubs.c": pkg_bigarray
+# OASIS_STOP
+
+<**/*.ml>: annot
+<src/lbfgs.ml>: syntax_camlp4o, pkg_camlp4.macro

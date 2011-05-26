@@ -1,0 +1,9 @@
+#							-*-conf-*-
+*.tar.gz
+_build
+src/Lbfgsb.2.1/
+*.odocl
+*.data
+*.log
+*.mllib
+*.clib
