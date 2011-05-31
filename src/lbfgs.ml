@@ -139,9 +139,15 @@ let nbd_of_lu (layout: 'l layout) n (l: 'l vec option) (u: 'l vec option) =
             : c_layout vec * c_layout vec) : 'l vec * 'l vec) in
   l, u, nbd
 
+let rec strip_final_spaces s i =
+  if i <= 0 then ""
+  else if s.[i] = ' ' || s.[i] = '\t' || s.[i] = '\n' then
+    strip_final_spaces s (i - 1)
+  else String.sub s 0 i
+
 let extract_c_string s =
-  try String.sub s 0 (String.index s '\000')
-  with Not_found -> String.copy s
+  try strip_final_spaces s (String.index s '\000')
+  with Not_found -> strip_final_spaces s (String.length s - 1)
 
 let min ?(iprint=0) ?work ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     ?l ?u f_df (x: 'l vec) =

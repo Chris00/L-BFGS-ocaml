@@ -9,10 +9,11 @@ DISTFILES = AUTHORS.txt INSTALL.txt README.txt \
   $(wildcard tests/*.ml)
 
 .PHONY: configure all byte native doc upload-doc install uninstall reinstall
-all byte native: configure
+all byte native: setup.data
 	ocaml setup.ml -build
 
-configure: setup.ml
+configure: setup.data
+setup.data: setup.ml
 	ocaml setup.ml -configure
 #	$(MAKE) -C src triangle/triangle.c triangle/triangle.h
 

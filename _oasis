@@ -16,6 +16,7 @@ Library lbfgs
   BuildTools: ocamlbuild
   Modules:    Lbfgs
   CSources:   lbfgs_stubs.c
+  # Lbfgsb.2.1/routines.f added via src/liblbfgs.clib
   BuildDepends: bigarray
 
 Document API
@@ -26,7 +27,14 @@ Document API
   XOCamlbuildPath: .
   XOCamlbuildLibraries: lbfgs
 
-# Tests:
+
+Executable Rosenbrock
+  Path:           examples/
+  MainIs:         Rosenbrock.ml
+  BuildDepends:   lbfgs
+  BuildTools:     ocamlbuild
+  Install:        false
+
 
 SourceRepository trunk
   Type:       bzr

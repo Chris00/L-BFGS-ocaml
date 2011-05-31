@@ -460,17 +460,41 @@ let package_default =
 let dispatch_default = MyOCamlbuildBase.dispatch_default package_default;;
 
 (* OASIS_STOP *)
+#1 "myocamlbuild.ml"
 (* Ocamlbuild_plugin.dispatch dispatch_default;; *)
 
 open Ocamlbuild_plugin;;
 
+let env = BaseEnvLight.load() (* setup.data *)
+
+let fortran = BaseEnvLight.var_get "fortran" env
+let fortran_lib = BaseEnvLight.var_get "fortran_library" env
+;;
 dispatch
   (MyOCamlbuildBase.dispatch_combine [
     dispatch_default;
     begin function
     | After_rules ->
       let f77 = "src" / "Lbfgsb.2.1" in
-      dep ["c"; "compile"] ["src" / "f2c.h"; f77 / "routines.f" ]
+      dep ["c"; "compile"] ["src" / "f2c.h"; f77 / "routines.f" ];
+
+      rule "Fortran to object" ~prod:"%.o" ~dep:"%.f"
+        begin fun env _build ->
+          let f = env "%.f" and o = env "%.o" in
+          let tags = tags_of_pathname f++"compile"++"fortran" in
+
+          let cmd = Cmd(S[A fortran; A"-c"; A"-o"; P o; A"-fPIC";
+                          T tags; P f ]) in
+          Seq[cmd]
+        end;
+
+      if fortran_lib <> "" then (
+        let flib = (S[A"-cclib"; A("-l" ^ fortran_lib)]) in
+        flag ["extension:cma"]  flib;
+        flag ["extension:cmxa"] flib;
+      );
+
+      flag ["program"; "byte"] (A"-custom");
 
     | _ -> ()
     end;

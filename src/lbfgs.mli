@@ -16,8 +16,6 @@
    LICENSE.txt for more details. *)
 
 (** Binding to
-    {{http://users.eecs.northwestern.edu/~nocedal/lbfgs.html}L-BFGS}
-    and
     {{http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html}L-BFGS-B}.
     These are respectively limited-memory quasi-Newton code for
     unconstrained optimization and for bound-constrained optimization.
@@ -25,14 +23,6 @@
     The authors of the original FORTRAN code expect that if you use
     their software in a publication, you quote one of these references:
 
-    For L-BFGS:
-    - J. Nocedal. Updating Quasi-Newton Matrices with Limited Storage
-    (1980), Mathematics of Computation 35, pp. 773-782.
-    - D.C. Liu and J. Nocedal. On the Limited Memory Method for Large
-    Scale Optimization (1989), Mathematical Programming B, 45, 3,
-    pp. 503-528.
-
-    For L-BFGS-B:
     - R. H. Byrd, P. Lu and J. Nocedal. A Limited Memory Algorithm for
     Bound Constrained Optimization, (1995), SIAM Journal on
     Scientific and Statistical Computing , 16, 5, pp. 1190-1208.
@@ -79,8 +69,9 @@ val min : ?iprint:int -> ?work:work ->
     [0.] suppresses this termination test.  Default: [1e7].
 
     @param pgtol The iteration will stop when
-    [max{|proj g_i | i = 1,..., n} <= pgtol]
+    [max{|proj g_i| : i = 1,..., n} <= pgtol]
     where [proj g_i] is the ith component of the projected gradient.
+    Setting [pgtol] to [0.] suppresses this termination test.
     Default: [1e-5].
 
     @param corrections maximum number of variable metric corrections

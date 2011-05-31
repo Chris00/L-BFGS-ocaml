@@ -87,7 +87,7 @@ value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
 }
 
 CAMLexport
-value ocaml_lbfgs_setulb_bg(value * argv, int argn)
+value ocaml_lbfgs_setulb_bc(value * argv, int argn)
 {
   return ocaml_lbfgs_setulb(
     argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6],
