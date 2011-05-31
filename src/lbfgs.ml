@@ -21,7 +21,8 @@ open Printf
 
 type 'l vec = (float, float64_elt, 'l) Array1.t
 type wvec = fortran_layout vec (* working vectors *)
-type 'l int_vec = (int, int_elt, 'l) Array1.t
+(* FORTRAN 77 "integer" is mandated to be half the size of DOUBLE PRECISION  *)
+type 'l int_vec = (int32, int32_elt, 'l) Array1.t
 type wint_vec = fortran_layout int_vec (* working int vectors *)
 
 external setulb :
@@ -58,11 +59,11 @@ let wvec ty n = Array1.create ty fortran_layout n
 let unsafe_work n m =
   { n = n;
     wa = wvec float64 ((2 * m + 4) * n + 12 * m * (m + 1));
-    iwa = wvec int (3 * n);
+    iwa = wvec int32 (3 * n);
     task = String.create 60;
     csave = String.create 60;
-    lsave = wvec int 4;
-    isave = wvec int 44;
+    lsave = wvec int32 4;
+    isave = wvec int32 44;
     dsave = wvec float64 29;
   }
 
@@ -89,13 +90,13 @@ exception Abnormal of float * string;;
 (* Macro so the final code is monomorphic for speed *)
 DEFINE NBD_OF_LU(n, first, last, lopt, uopt, empty_vec) =
   match lopt, uopt with
-  | None, None -> Array1.fill nbd 0; (empty_vec, empty_vec)
+  | None, None -> Array1.fill nbd 0l; (empty_vec, empty_vec)
   | Some l, None ->
     if Array1.dim l < n then
       invalid_arg(sprintf "Lbfgs.min: dim l = %i < dim x = %i"
                     (Array1.dim l) n);
     for i = first to last do
-      nbd.{i} <- if l.{i} = neg_infinity then 0 else 1
+      nbd.{i} <- if l.{i} = neg_infinity then 0l else 1l
     done;
     (l, empty_vec)
   | None, Some u ->
@@ -103,7 +104,7 @@ DEFINE NBD_OF_LU(n, first, last, lopt, uopt, empty_vec) =
       invalid_arg(sprintf "Lbfgs.min: dim u = %i < dim x = %i"
                     (Array1.dim u) n);
     for i = first to last do
-      nbd.{i} <- if u.{i} = infinity then 0 else 3
+      nbd.{i} <- if u.{i} = infinity then 0l else 3l
     done;
     (empty_vec, u)
   | Some l, Some u ->
@@ -115,8 +116,8 @@ DEFINE NBD_OF_LU(n, first, last, lopt, uopt, empty_vec) =
                     (Array1.dim u) n);
     for i = first to last do
       nbd.{i} <-
-        if l.{i} = neg_infinity then (if u.{i} = infinity then 0 else 3)
-        else (if u.{i} = infinity then 1 else 2)
+        if l.{i} = neg_infinity then (if u.{i} = infinity then 0l else 3l)
+        else (if u.{i} = infinity then 1l else 2l)
     done;
     (l, u)
 ;;
@@ -125,7 +126,7 @@ let empty_vec_c = Array1.create float64 c_layout 0
 let empty_vec_fortran = Array1.create float64 fortran_layout 0
 
 let nbd_of_lu (layout: 'l layout) n (l: 'l vec option) (u: 'l vec option) =
-  let nbd = Array1.create int layout n in
+  let nbd = Array1.create int32 layout n in
   let l, u =
     if (Obj.magic layout: 'a layout) = fortran_layout then
       (Obj.magic
@@ -149,6 +150,7 @@ let extract_c_string s =
   try strip_final_spaces s (String.index s '\000')
   with Not_found -> strip_final_spaces s (String.length s - 1)
 
+
 let min ?(iprint=0) ?work ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     ?l ?u f_df (x: 'l vec) =
   let n = Array1.dim x in
@@ -160,7 +162,7 @@ let min ?(iprint=0) ?work ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
   let w = match work with
     | None -> unsafe_work n m
     | Some w -> check_work n m w; w in
-  set_start w.task;
+  set_start w.task; (* task = "START" *)
   let continue = ref true in
   let f = ref nan
   and g = Array1.create float64 layout n in

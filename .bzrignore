@@ -1,9 +1,12 @@
-#							-*-conf-*-
+#							-*-conf-unix-*-
 *.tar.gz
 _build
 src/Lbfgsb.2.1/
+src/META
 *.odocl
 *.data
 *.log
 *.mllib
 *.clib
+*.byte
+*.native
