@@ -68,6 +68,13 @@ let unsafe_work n m =
     dsave = wvec float64 29;
   }
 
+let work ?(corrections=10) n =
+  if corrections <= 0 then
+    failwith "Lbfgs.work: corrections must be > 0";
+  if n <= 0 then
+    failwith "Lbfgs.work: n must be > 0";
+  unsafe_work n corrections
+
 let ceil_div n d = (n + d - 1) / d
 let max i j = if (i: int) > j then i else j (* specialized version *)
 
@@ -156,20 +163,18 @@ let min ?(iprint=0) ?work ?(nsteps=max_int)
     ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     ?l ?u f_df (x: 'l vec) =
   let n = Array1.dim x in
-  let m =
-    if corrections > 0 then corrections
-    else failwith "Lbfgs.min: corrections must be > 0" in
+  if corrections <= 0 then failwith "Lbfgs.min: corrections must be > 0";
   let layout : 'l layout = Array1.layout x in
   let l, u, nbd = nbd_of_lu layout n l u in
   let w = match work with
-    | None -> unsafe_work n m
-    | Some w -> check_work n m w; w in
+    | None -> unsafe_work n corrections
+    | Some w -> check_work n corrections w; w in
   set_start w.task; (* task = "START" *)
   let continue = ref true in
   let f = ref nan
   and g = Array1.create float64 layout n in
   while !continue do
-    f := setulb ~m ~x ~l ~u ~nbd ~f:!f ~g ~factr ~pgtol
+    f := setulb ~m:corrections ~x ~l ~u ~nbd ~f:!f ~g ~factr ~pgtol
       ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint ~csave:w.csave
       ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
     match w.task.[0] with

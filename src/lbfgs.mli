@@ -16,7 +16,7 @@
    LICENSE.txt for more details. *)
 
 (** Binding to
-    {{http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html}L-BFGS-B}.
+    {{:http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html}L-BFGS-B}.
     These are respectively limited-memory quasi-Newton code for
     unconstrained optimization and for bound-constrained optimization.
 
@@ -33,11 +33,15 @@
 *)
 
 type 'l vec = (float, Bigarray.float64_elt, 'l) Bigarray.Array1.t
+(** Vectors for this module. *)
 
 type work
+(** Represent the memory space needed to solve a minimization problem.
+    It is usually allocated automatically but it is possible to
+    do it manually to, say, allocate it once only before a loop. *)
 
 exception Abnormal of float * string
-(** [Abnormal(f,msg)] is raised if the routine terminated abnormally
+(** [Abnormal(f, msg)] is raised if the routine terminated abnormally
     without being able to satisfy the termination conditions.  In such
     an event, the variable [x] (see {!min}) will contain the current
     best approximation found and [f] is the value of the target
@@ -80,6 +84,12 @@ val min : ?iprint:int -> ?work:work -> ?nsteps: int ->
     computing time.  The range 3 <= corrections <= 20 is recommended.
     Default: [10].
 
-    @nsteps maximum number of steps.  Default: no limitation.
+    @param nsteps maximum number of steps.  Default: no limitation.
 
-    @param iprint *)
+    @param iprint Tells the amount of debugging information desired. *)
+
+
+val work : ?corrections:int -> int -> work
+(** [work n] allocate the work space for a problem of size at most [n].
+
+    @param corrections See {!min}. *)
