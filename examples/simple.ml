@@ -6,7 +6,10 @@ open Bigarray
 let () =
   let f x = x *. x -. 2.
   and f' x = 2. *. x in
-  let u0 = Array1.create float64 fortran_layout 1 in
-  u0.{1} <- 1.;
-  let m = Lbfgs.min (fun u df -> df.{1} <- f' u.{1}; f u.{1}) u0 in
-  printf "min = %g\n" m
+  let u = Array1.create float64 fortran_layout 1 in
+  u.{1} <- 1.;
+  try
+    let m = Lbfgs.min (fun u df -> df.{1} <- f' u.{1}; f u.{1}) u ~iprint:1 in
+    printf "min = %g at x = %g\n" m u.{1}
+  with Lbfgs.Abnormal(fx, err) ->
+    printf "ERROR: %S, x = %g, f = %g\n" err u.{1} fx
