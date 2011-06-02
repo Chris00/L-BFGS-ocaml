@@ -177,7 +177,30 @@ let int_of_print = function
 | All -> 100
 | Full -> 101
 
-let min ?(print=No) ?work ?(nsteps=max_int)
+type state = work
+(* Distinguish it from the first to avoid questionning a workspace not
+   being used.  This information is only available when task=NEW_X. *)
+
+let is_constrained w = w.lsave.{2} <> 0l
+let nintervals w = Int32.to_int w.isave.{22}
+let nskipped_updates w = Int32.to_int w.isave.{26}
+let iter w = Int32.to_int w.isave.{30}
+let nupdates w = Int32.to_int w.isave.{31}
+let nintervals_current w = Int32.to_int w.isave.{33}
+let neval w = Int32.to_int w.isave.{34}
+let neval_current w = Int32.to_int w.isave.{36}
+
+let previous_f w = w.dsave.{2}
+let norm_dir w = w.dsave.{4}
+let eps w = w.dsave.{5}
+let time_cauchy w = w.dsave.{7}
+let time_subspace_min w = w.dsave.{8}
+let time_line_search w = w.dsave.{9}
+let slope w = w.dsave.{11}
+let normi_grad w = w.dsave.{13}
+let slope_init w = w.dsave.{15}
+
+let min ?(print=No) ?work ?nsteps ?stop
     ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     ?l ?u f_df (x: 'l vec) =
   let n = Array1.dim x in
@@ -191,6 +214,11 @@ let min ?(print=No) ?work ?(nsteps=max_int)
   let continue = ref true in
   let f = ref nan
   and g = Array1.create float64 layout n in
+  let stop_at_x = match nsteps, stop with
+    | None, None -> (fun w -> false)
+    | Some n, None -> (fun w -> Int32.to_int w.isave.{30} > n)
+    | None, Some f -> f
+    | Some n, Some f -> (fun w -> Int32.to_int w.isave.{30} > n || f w) in
   while !continue do
     f := setulb ~m:corrections ~x ~l ~u ~nbd ~f:!f ~g ~factr ~pgtol
       ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint:(int_of_print print)
@@ -202,14 +230,12 @@ let min ?(print=No) ?work ?(nsteps=max_int)
       continue := false
     | 'A' (* ABNO *) -> raise(Abnormal(!f, extract_c_string w.task))
     | 'E' (* ERROR *) -> invalid_arg (extract_c_string w.task)
-    | 'N' (* NEW_X *) ->
-      if Int32.to_int w.isave.{30} > nsteps then
-        continue := false
+    | 'N' (* NEW_X *) -> if stop_at_x w then continue := false
     | _ -> assert false
   done;
   1. *. !f (* unbox f *)
 
 
 (* Local Variables: *)
-(* compile-command: "make -C .." *)
+(* compile-command: "make -k -C .." *)
 (* End: *)
