@@ -5143,6 +5143,8 @@ let setup () = BaseSetup.setup setup_t;;
 (* OASIS_STOP *)
 #1 "setup.ml"
 
+open Printf
+
 (* Naive substring detection *)
 let rec is_substring_pos j p lenp i s lens =
   if j >= lenp then true
@@ -5156,6 +5158,22 @@ let rec is_substring_loop p lenp i s lens =
 let is_substring p s =
   is_substring_loop p (String.length p) 0 s (String.length s)
 
+let compile_and_run_c ?(flags=[]) pgm ?(exit_code=(fun _ -> ())) compile_err =
+  let tmp, fh = Filename.open_temp_file "setup" ".c" in
+  output_string fh pgm;
+  close_out fh;
+  let pgm = Filename.temp_file "oasis-" ".exe" in
+  let o = match Sys.os_type with
+    | "Unix" | "Cygwin" -> "-o" ^ pgm
+    | "Win32" -> "/Fe" ^ pgm
+    | _ -> assert false in
+  let args = o :: (flags @ [tmp]) in
+  BaseExec.run (BaseStandardVar.bytecomp_c_compiler()) args
+    ~f_exit_code:(fun e -> if e <> 0 then (compile_err(); exit 1));
+  Sys.remove tmp;
+  BaseExec.run pgm [] ~f_exit_code:exit_code;
+  Sys.remove pgm
+
 let fortran = BaseCheck.prog_best "fortran" ["gfortran"; "g95"; "g77"]
 
 let fortran_lib =
@@ -5163,6 +5181,21 @@ let fortran_lib =
   else ""
 
 let _ = BaseEnv.var_define "fortran_library" (lazy fortran_lib)
+
+
+let big_endian64() =
+  let big = ref false in
+  compile_and_run_c
+    "int main(int argc, char **argv) {
+       const int i = 1;
+       return((*(char*)&i) == 0 && sizeof(int) == sizeof(double) );
+     }"
+    (fun _ -> printf "ERROR: Could not compile the big_endian test program. \
+      Maybe the C compiler is not correctly installed?")
+    ~exit_code:(fun e -> printf "***%i\n" e; if e <> 0 then big := true);
+  string_of_bool !big
+
+let _ = BaseEnv.var_define "big_endian64" (lazy(big_endian64()))
 
 
 let () = setup ()

@@ -39,6 +39,14 @@
 #define INT_VEC_DATA(V) \
   ((int *) Caml_ba_array_val(v##V)->data)
 
+#ifdef BIG_ENDIAN64
+/* If the integer are 64 bits, one must use to the higher bytes to
+   get the least significant part of the number. */
+#define PTR_INT(x) (integer *) (((char *) &x) + 4)
+#else
+#define PTR_INT(x) &x
+#endif
+
 
 /*
  * Declaring Fortran functions
@@ -70,19 +78,18 @@ value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
                          value vcsave, value vlsave, value visave,
                          value vdsave)
 {
-  integer m = Int_val(vm); /* FIXME: is there any problem with
-                              bigendian machines with 64 bits?  Only
-                              the first 32 will be used by FORTRAN */
+  integer m = Int_val(vm);
   VEC_PARAMS(x);
   doublereal f = Double_val(vf);
   doublereal factr = Double_val(vfactr);
   doublereal pgtol = Double_val(vpgtol);
   integer iprint = Int_val(viprint);
 
-  setulb_(&dim_x, &m, x_data, VEC_DATA(l), VEC_DATA(u), INT_VEC_DATA(nbd),
+  setulb_(&dim_x, PTR_INT(m),
+          x_data, VEC_DATA(l), VEC_DATA(u), INT_VEC_DATA(nbd),
           &f, VEC_DATA(g), &factr, &pgtol, VEC_DATA(wa), INT_VEC_DATA(iwa),
           String_val(vtask), /* shared content with OCaml */
-          &iprint, String_val(vcsave),
+          PTR_INT(iprint), String_val(vcsave),
           INT_VEC_DATA(lsave), INT_VEC_DATA(isave), VEC_DATA(dsave));
   /* The following allocates but we do not need Caml arguments anymore: */
   return(copy_double(f));
