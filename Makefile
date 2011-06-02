@@ -37,7 +37,7 @@ dist tar: setup.ml
 .PHONY: clean distclean
 clean: setup.ml
 	ocaml setup.ml -clean
-	$(RM) $(TARBALL)
+	$(RM) $(TARBALL) iterate.dat
 
 distclean: setup.ml
 	ocaml setup.ml -distclean
