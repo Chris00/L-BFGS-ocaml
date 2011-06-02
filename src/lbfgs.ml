@@ -158,8 +158,26 @@ let extract_c_string s =
   try strip_final_spaces s (String.index s '\000')
   with Not_found -> strip_final_spaces s (String.length s - 1)
 
+type print =
+| No
+| Last
+| Every of int
+| Details
+| All
+| Full
 
-let min ?(iprint=0) ?work ?(nsteps=max_int)
+let int_of_print = function
+| No -> -1
+| Last -> 0
+| Every i ->
+  if i <= 0 then -1
+  else if i >= 98 then 98
+  else i
+| Details -> 99
+| All -> 100
+| Full -> 101
+
+let min ?(print=No) ?work ?(nsteps=max_int)
     ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     ?l ?u f_df (x: 'l vec) =
   let n = Array1.dim x in
@@ -175,8 +193,8 @@ let min ?(iprint=0) ?work ?(nsteps=max_int)
   and g = Array1.create float64 layout n in
   while !continue do
     f := setulb ~m:corrections ~x ~l ~u ~nbd ~f:!f ~g ~factr ~pgtol
-      ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint ~csave:w.csave
-      ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
+      ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint:(int_of_print print)
+      ~csave:w.csave ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
     match w.task.[0] with
     | 'F' (* FG *) -> f := f_df x g
     | 'C' (* CONV *) ->

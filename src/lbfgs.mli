@@ -48,7 +48,21 @@ exception Abnormal of float * string
     function at [x].  [msg] is a message containing additional
     information. *)
 
-val min : ?iprint:int -> ?work:work -> ?nsteps: int ->
+(** Control of the frequency *)
+type print =
+| No    (** No output is generated. *)
+| Last  (** Print one line at the last iteration. *)
+| Every of int (** [Every k] prints the value of the function and |proj
+                   gradient| every [k] iterations.  Valid values are
+                   [0 <= k <= 98], otherwise the closer value in that
+                   interval is used. *)
+| Details (** Print details of every iteration (except vectors). *)
+| All   (** Print details of every iteration (except vectors)
+            including changes of active set and final x.  *)
+| Full  (** Print details of every iteration including x and g. *)
+
+
+val min : ?print:print -> ?work:work -> ?nsteps: int ->
   ?corrections:int -> ?factr:float -> ?pgtol:float ->
   ?l:'l vec -> ?u:'l vec -> ('l vec -> 'l vec -> float) -> 'l vec -> float
 (** [min f_df x] compute the minimum of the function [f] given by
@@ -86,7 +100,8 @@ val min : ?iprint:int -> ?work:work -> ?nsteps: int ->
 
     @param nsteps maximum number of steps.  Default: no limitation.
 
-    @param iprint Tells the amount of debugging information desired. *)
+    @param print Tells the amount of debugging information desired.
+    Default: [No]. *)
 
 
 val work : ?corrections:int -> int -> work
