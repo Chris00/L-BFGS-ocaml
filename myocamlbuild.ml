@@ -484,7 +484,7 @@ dispatch
           let tags = tags_of_pathname f++"compile"++"fortran" in
 
           let cmd = Cmd(S[A fortran; A"-c"; A"-o"; P o; A"-fPIC";
-                          T tags; P f ]) in
+                          A"-O3"; T tags; P f ]) in
           Seq[cmd]
         end;
 
@@ -495,7 +495,7 @@ dispatch
       );
 
       flag ["program"; "byte"] (A"-custom");
-
+      flag ["compile"; "native"] (S[A"-inline"; A"3"]);
     | _ -> ()
     end;
   ]);;
