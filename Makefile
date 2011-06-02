@@ -15,7 +15,6 @@ all byte native: setup.data
 configure: setup.data
 setup.data: setup.ml
 	ocaml setup.ml -configure
-#	$(MAKE) -C src triangle/triangle.c triangle/triangle.h
 
 setup.ml: _oasis
 	oasis setup
@@ -36,10 +35,10 @@ dist tar: setup.ml
 	$(RM) -r $(DIR)
 
 .PHONY: clean distclean
-clean:
+clean: setup.ml
 	ocaml setup.ml -clean
 	$(RM) $(TARBALL)
 
-distclean:
+distclean: setup.ml
 	ocaml setup.ml -distclean
 	$(RM) $(wildcard *.ba[0-9] *.bak *~ *.odocl) setup.log
