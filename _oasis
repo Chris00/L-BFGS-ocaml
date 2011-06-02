@@ -41,7 +41,7 @@ Executable Rosenbrock
   BuildDepends:   lbfgs
   BuildTools:     ocamlbuild
   Install:        false
-
+  CompiledObject: best
 
 SourceRepository trunk
   Type:       bzr

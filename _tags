@@ -1,13 +1,13 @@
 # OASIS_START
-# DO NOT EDIT (digest: de15043ada58936d443e3fa9ffed60b7)
+# DO NOT EDIT (digest: ded2beb1ad2056afc58af084c729d407)
 # Library lbfgs
 "src": include
 <src/lbfgs.{cma,cmxa}>: use_liblbfgs
 <src/*.ml{,i}>: pkg_bigarray
 "src/lbfgs_stubs.c": pkg_bigarray
 # Executable Rosenbrock
-"examples/Rosenbrock.byte": use_lbfgs
-"examples/Rosenbrock.byte": pkg_bigarray
+<examples/Rosenbrock.{native,byte}>: use_lbfgs
+<examples/Rosenbrock.{native,byte}>: pkg_bigarray
 # Executable simple
 "examples/simple.byte": use_lbfgs
 "examples/simple.byte": pkg_bigarray

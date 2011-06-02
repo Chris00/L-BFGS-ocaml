@@ -14,18 +14,16 @@ let f_df (x: vec) (g: vec) =
     g.{i} <- 8. *. t2 -. 16. *. x.{i} *. !t1;
   done;
   g.{n} <- 8. *. !t1;
-  Printf.printf "*** %g\n" g.{n};
   (* Compute the function value and return it *)
   let f = ref(let d1 = x.{1} -. 1. in 0.25 *. d1 *. d1) in
   for i = 2 to n do
     let di = x.{i} -. x.{i-1} *. x.{i-1} in
     f := !f +. di *. di;
   done;
-  printf "f = %g\n" (4. *. !f);
   4. *. !f
 
 let () =
-  let n = 25 in
+  let n = 100000 in
   printf "min Rosenbrock function (n = %i): %!" n;
   let x = Array1.create float64 fortran_layout n in
   Array1.fill x 3.;
@@ -36,5 +34,5 @@ let () =
   let u = Array1.create float64 fortran_layout n in
   Array1.fill u 100.;
 
-  let f = Lbfgs.min f_df x ~l ~u in
-  printf "%g\n" f
+  let f = Lbfgs.min f_df x ~l ~u ~corrections:5 ~iprint:1 in
+  printf "min = %g\n" f
