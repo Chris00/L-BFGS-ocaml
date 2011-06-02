@@ -1,7 +1,8 @@
 #							-*-conf-unix-*-
 *.tar.gz
 _build
-src/Lbfgsb.2.1/
+src/Lbfgsb.2.1/*
+iterate.dat
 src/META
 *.odocl
 *.data
@@ -10,3 +11,4 @@ src/META
 *.clib
 *.byte
 *.native
+API.docdir
