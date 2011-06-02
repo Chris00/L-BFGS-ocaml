@@ -44,7 +44,7 @@ exception Abnormal of float * string
     function at [x].  [msg] is a message containing additional
     information. *)
 
-val min : ?iprint:int -> ?work:work ->
+val min : ?iprint:int -> ?work:work -> ?nsteps: int ->
   ?corrections:int -> ?factr:float -> ?pgtol:float ->
   ?l:'l vec -> ?u:'l vec -> ('l vec -> 'l vec -> float) -> 'l vec -> float
 (** [min f_df x] compute the minimum of the function [f] given by
@@ -79,5 +79,7 @@ val min : ?iprint:int -> ?work:work ->
     recommended, and large values of m can result in excessive
     computing time.  The range 3 <= corrections <= 20 is recommended.
     Default: [10].
+
+    @nsteps maximum number of steps.  Default: no limitation.
 
     @param iprint *)

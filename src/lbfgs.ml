@@ -60,8 +60,9 @@ let unsafe_work n m =
   { n = n;
     wa = wvec float64 ((2 * m + 4) * n + 12 * m * (m + 1));
     iwa = wvec int32 (3 * n);
-    task = String.create 60;
-    csave = String.create 60;
+    (* FORTRAN requires the strings to be initialized with spaces: *)
+    task = String.make 60 ' ';
+    csave = String.make 60 ' ';
     lsave = wvec int32 4;
     isave = wvec int32 44;
     dsave = wvec float64 29;
@@ -82,8 +83,8 @@ let check_work n m work =
                n n_min)
 
 let set_start s =
-  s.[0] <- 'S'; s.[1] <- 'T'; s.[2] <- 'A'; s.[3] <- 'R'; s.[4] <- 'T';
-  s.[5] <- '\000' (* for FORTRAN *)
+  (* No final '\000' for FORTRAN *)
+  s.[0] <- 'S'; s.[1] <- 'T'; s.[2] <- 'A'; s.[3] <- 'R'; s.[4] <- 'T'
 
 exception Abnormal of float * string;;
 
@@ -151,7 +152,8 @@ let extract_c_string s =
   with Not_found -> strip_final_spaces s (String.length s - 1)
 
 
-let min ?(iprint=0) ?work ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
+let min ?(iprint=0) ?work ?(nsteps=max_int)
+    ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     ?l ?u f_df (x: 'l vec) =
   let n = Array1.dim x in
   let m =
@@ -172,12 +174,14 @@ let min ?(iprint=0) ?work ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
       ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
     match w.task.[0] with
     | 'F' (* FG *) -> f := f_df x g
-    | 'C' (* CONV *) -> continue := false
-    | 'A' (* ABNO *) ->
-      raise(Abnormal(!f, extract_c_string w.task))
-    | 'E' (* ERROR *) ->
-      invalid_arg (extract_c_string w.task)
-    | 'N' (* NEW_X *) -> () (* loop *)
+    | 'C' (* CONV *) ->
+      (* the termination test in L-BFGS-B has been satisfied. *)
+      continue := false
+    | 'A' (* ABNO *) -> raise(Abnormal(!f, extract_c_string w.task))
+    | 'E' (* ERROR *) -> invalid_arg (extract_c_string w.task)
+    | 'N' (* NEW_X *) ->
+      if Int32.to_int w.isave.{30} > nsteps then
+        continue := false
     | _ -> assert false
   done;
   1. *. !f (* unbox f *)

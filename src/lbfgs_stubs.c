@@ -70,7 +70,6 @@ value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
                          value vcsave, value vlsave, value visave,
                          value vdsave)
 {
-  /* noalloc */
   integer m = Int_val(vm); /* FIXME: is there any problem with
                               bigendian machines with 64 bits?  Only
                               the first 32 will be used by FORTRAN */
@@ -85,7 +84,7 @@ value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
           String_val(vtask), /* shared content with OCaml */
           &iprint, String_val(vcsave),
           INT_VEC_DATA(lsave), INT_VEC_DATA(isave), VEC_DATA(dsave));
-  /* The following may allocate but we do not need Caml arguments anymore: */
+  /* The following allocates but we do not need Caml arguments anymore: */
   return(copy_double(f));
 }
 
