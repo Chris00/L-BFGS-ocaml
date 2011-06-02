@@ -39,6 +39,7 @@
 #define INT_VEC_DATA(V) \
   ((int *) Caml_ba_array_val(v##V)->data)
 
+
 /*
  * Declaring Fortran functions
  **********************************************************************/
@@ -70,13 +71,15 @@ value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
                          value vdsave)
 {
   /* noalloc */
-  integer m = Int_val(vm);
+  integer m = Int_val(vm); /* FIXME: is there any problem with
+                              bigendian machines with 64 bits?  Only
+                              the first 32 will be used by FORTRAN */
   VEC_PARAMS(x);
   doublereal f = Double_val(vf);
   doublereal factr = Double_val(vfactr);
   doublereal pgtol = Double_val(vpgtol);
   integer iprint = Int_val(viprint);
-  
+
   setulb_(&dim_x, &m, x_data, VEC_DATA(l), VEC_DATA(u), INT_VEC_DATA(nbd),
           &f, VEC_DATA(g), &factr, &pgtol, VEC_DATA(wa), INT_VEC_DATA(iwa),
           String_val(vtask), /* shared content with OCaml */

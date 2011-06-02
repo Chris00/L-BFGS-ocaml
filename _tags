@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 58d52e1b7300373198f84b454dd41b48)
+# DO NOT EDIT (digest: de15043ada58936d443e3fa9ffed60b7)
 # Library lbfgs
 "src": include
 <src/lbfgs.{cma,cmxa}>: use_liblbfgs
@@ -8,6 +8,9 @@
 # Executable Rosenbrock
 "examples/Rosenbrock.byte": use_lbfgs
 "examples/Rosenbrock.byte": pkg_bigarray
+# Executable simple
+"examples/simple.byte": use_lbfgs
+"examples/simple.byte": pkg_bigarray
 <examples/*.ml{,i}>: use_lbfgs
 <examples/*.ml{,i}>: pkg_bigarray
 # OASIS_STOP

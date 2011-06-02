@@ -170,16 +170,15 @@ let min ?(iprint=0) ?work ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
     f := setulb ~m ~x ~l ~u ~nbd ~f:!f ~g ~factr ~pgtol
       ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint ~csave:w.csave
       ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
-    if w.task.[0] = 'F' (* FG *) then (
-      f := f_df x g
-    )
-    else if w.task.[0] = 'C' (* CONV *) then
-      continue := false
-    else if w.task.[0] = 'A' (* ABNO *) then
+    match w.task.[0] with
+    | 'F' (* FG *) -> f := f_df x g
+    | 'C' (* CONV *) -> continue := false
+    | 'A' (* ABNO *) ->
       raise(Abnormal(!f, extract_c_string w.task))
-    else if w.task.[0] = 'E' (* ERROR *) then
+    | 'E' (* ERROR *) ->
       invalid_arg (extract_c_string w.task)
-    (* w.task = "NEW_X", loop *)
+    | 'N' (* NEW_X *) -> () (* loop *)
+    | _ -> assert false
   done;
   1. *. !f (* unbox f *)
 

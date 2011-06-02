@@ -28,6 +28,13 @@ Document API
   XOCamlbuildLibraries: lbfgs
 
 
+Executable simple
+  Path:           examples/
+  MainIs:         simple.ml
+  BuildDepends:   lbfgs
+  BuildTools:     ocamlbuild
+  Install:        false
+
 Executable Rosenbrock
   Path:           examples/
   MainIs:         Rosenbrock.ml
