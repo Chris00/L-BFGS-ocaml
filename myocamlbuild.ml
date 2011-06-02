@@ -495,7 +495,7 @@ dispatch
       );
 
       flag ["program"; "byte"] (A"-custom");
-      flag ["compile"; "native"] (S[A"-inline"; A"3"]);
+      flag ["compile"; "native"] (S[A"-inline"; A"10"]);
     | _ -> ()
     end;
   ]);;
