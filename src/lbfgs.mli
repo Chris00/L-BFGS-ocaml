@@ -32,8 +32,7 @@
     Vol 23, Num. 4, pp. 550-560.
 *)
 
-type 'l vec = (float, Bigarray.float64_elt, 'l) Bigarray.Array1.t
-(** Vectors for this module. *)
+open Bigarray
 
 type work
 (** Represent the memory space needed to solve a minimization problem.
@@ -65,10 +64,17 @@ type state
 (** Holds informations on the current state of the computation that
     can help to decide whether to stop. *)
 
+(** Fortran Layout. *)
+module F :
+sig
+  type vec = (float, float64_elt, fortran_layout) Array1.t
+  (** Vectors. *)
 
-val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
-  ?corrections:int -> ?factr:float -> ?pgtol:float ->
-  ?l:'l vec -> ?u:'l vec -> ('l vec -> 'l vec -> float) -> 'l vec -> float
+  val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+    ?corrections:int -> ?factr:float -> ?pgtol:float ->
+    ?n:int ->
+    ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
+    (vec -> vec -> float) -> ?ofsx:int -> vec -> float
 (** [min f_df x] compute the minimum of the function [f] given by
     [f_df].  [x] is an intial estimate of the solution vector.  On
     termination, [x] will contain the best approximation found.  [f_df
@@ -82,6 +88,11 @@ val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
     @param u upper bound for each component of the vector [x].  Set
     [u.(i)] to [infinity] to indicate that no upper bound is desired.
     Default: no upper bounds.
+
+    @param n the dimension of the space of unknowns.  Default: [dim x].
+    @param ofsl offset for the matrix [l].  Default: [1].
+    @param ofsu offset for the matrix [u].  Default: [1].
+    @param ofsx offset for the matrix [x].  Default: [1].
 
     @param factr tolerance in the termination test for the algorithm.
     The iteration will stop when
@@ -109,7 +120,22 @@ val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
 
     @param print Tells the amount of debugging information desired.
     Default: [No]. *)
+end
 
+(** C layout. *)
+module C :
+sig
+  type vec = (float, float64_elt, c_layout) Array1.t
+  (** Vectors indexed by [0 .. n-1]. *)
+
+  val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+    ?corrections:int -> ?factr:float -> ?pgtol:float ->
+    ?n:int ->
+    ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
+    (vec -> vec -> float) -> ?ofsx:int -> vec -> float
+  (** @see {!F.min}.  Note that the default value for [ofsl], [ofsu]
+      and [ofsx] is [0]. *)
+end
 
 val work : ?corrections:int -> int -> work
 (** [work n] allocate the work space for a problem of size at most [n].

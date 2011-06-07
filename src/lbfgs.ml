@@ -28,7 +28,10 @@ type wint_vec = fortran_layout int_vec (* working int vectors *)
 external setulb :
   (* n = dim(x) *)
   m:int ->
-  x:'l vec -> l:'l vec -> u:'l vec -> nbd:'l int_vec ->
+  (* BEWARE: C-style offsets *)
+  c_ofsx:int -> x:'l vec ->
+  c_ofsl:int -> l:'l vec ->
+  c_ofsu:int -> u:'l vec -> nbd:'l int_vec ->
   f:float -> g:'l vec -> factr:float -> pgtol:float ->
   wa:wvec ->      (* dim: (2m + 4)n + 12m^2 + 12m *)
   iwa:wint_vec -> (* dim: 3n *)
@@ -95,58 +98,6 @@ let set_start s =
 
 exception Abnormal of float * string;;
 
-(* Macro so the final code is monomorphic for speed *)
-DEFINE NBD_OF_LU(n, first, last, lopt, uopt, empty_vec) =
-  match lopt, uopt with
-  | None, None -> Array1.fill nbd 0l; (empty_vec, empty_vec)
-  | Some l, None ->
-    if Array1.dim l < n then
-      invalid_arg(sprintf "Lbfgs.min: dim l = %i < dim x = %i"
-                    (Array1.dim l) n);
-    for i = first to last do
-      nbd.{i} <- if l.{i} = neg_infinity then 0l else 1l
-    done;
-    (l, empty_vec)
-  | None, Some u ->
-    if Array1.dim u < n then
-      invalid_arg(sprintf "Lbfgs.min: dim u = %i < dim x = %i"
-                    (Array1.dim u) n);
-    for i = first to last do
-      nbd.{i} <- if u.{i} = infinity then 0l else 3l
-    done;
-    (empty_vec, u)
-  | Some l, Some u ->
-    if Array1.dim l < n then
-      invalid_arg(sprintf "Lbfgs.min: dim l = %i < dim x = %i"
-                    (Array1.dim l) n);
-    if Array1.dim u < n then
-      invalid_arg(sprintf "Lbfgs.min: dim u = %i < dim x = %i"
-                    (Array1.dim u) n);
-    for i = first to last do
-      nbd.{i} <-
-        if l.{i} = neg_infinity then (if u.{i} = infinity then 0l else 3l)
-        else (if u.{i} = infinity then 1l else 2l)
-    done;
-    (l, u)
-;;
-
-let empty_vec_c = Array1.create float64 c_layout 0
-let empty_vec_fortran = Array1.create float64 fortran_layout 0
-
-let nbd_of_lu (layout: 'l layout) n (l: 'l vec option) (u: 'l vec option) =
-  let nbd = Array1.create int32 layout n in
-  let l, u =
-    if (Obj.magic layout: 'a layout) = fortran_layout then
-      (Obj.magic
-         (NBD_OF_LU(n, 1, n, (Obj.magic l: fortran_layout vec option),
-                   (Obj.magic u: fortran_layout vec option), empty_vec_fortran)
-            : fortran_layout vec * fortran_layout vec) : 'l vec * 'l vec)
-    else
-      (Obj.magic
-         (NBD_OF_LU(n, 0, n - 1, (Obj.magic l: c_layout vec option),
-                (Obj.magic u: c_layout vec option), empty_vec_c)
-            : c_layout vec * c_layout vec) : 'l vec * 'l vec) in
-  l, u, nbd
 
 let rec strip_final_spaces s i =
   if i <= 0 then ""
@@ -200,41 +151,29 @@ let slope w = w.dsave.{11}
 let normi_grad w = w.dsave.{13}
 let slope_init w = w.dsave.{15}
 
-let min ?(print=No) ?work ?nsteps ?stop
-    ?(corrections=10) ?(factr=1e7) ?(pgtol=1e-5)
-    ?l ?u f_df (x: 'l vec) =
-  let n = Array1.dim x in
-  if corrections <= 0 then failwith "Lbfgs.min: corrections must be > 0";
-  let layout : 'l layout = Array1.layout x in
-  let l, u, nbd = nbd_of_lu layout n l u in
-  let w = match work with
-    | None -> unsafe_work n corrections
-    | Some w -> check_work n corrections w; w in
-  set_start w.task; (* task = "START" *)
-  let continue = ref true in
-  let f = ref nan
-  and g = Array1.create float64 layout n in
-  let stop_at_x = match nsteps, stop with
-    | None, None -> (fun w -> false)
-    | Some n, None -> (fun w -> Int32.to_int w.isave.{30} > n)
-    | None, Some f -> f
-    | Some n, Some f -> (fun w -> Int32.to_int w.isave.{30} > n || f w) in
-  while !continue do
-    f := setulb ~m:corrections ~x ~l ~u ~nbd ~f:!f ~g ~factr ~pgtol
-      ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint:(int_of_print print)
-      ~csave:w.csave ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
-    match w.task.[0] with
-    | 'F' (* FG *) -> f := f_df x g
-    | 'C' (* CONV *) ->
-      (* the termination test in L-BFGS-B has been satisfied. *)
-      continue := false
-    | 'A' (* ABNO *) -> raise(Abnormal(!f, extract_c_string w.task))
-    | 'E' (* ERROR *) -> invalid_arg (extract_c_string w.task)
-    | 'N' (* NEW_X *) -> if stop_at_x w then continue := false
-    | _ -> assert false
-  done;
-  1. *. !f (* unbox f *)
+module F =
+struct
+  type vec = (float, float64_elt, fortran_layout) Array1.t
+  type layout = fortran_layout
+  let layout = fortran_layout
+  ;;
+  DEFINE MOD = "Lbfgs.F";;
+  DEFINE FIRST = 1;;
+  DEFINE LAST(n) = n;;
+  INCLUDE "src/lbfgs_FC.ml";; (* ocamlbuild compiles from ".." *)
+end
 
+module C =
+struct
+  type vec = (float, float64_elt, c_layout) Array1.t
+  type layout = c_layout
+  let layout = c_layout
+
+  DEFINE MOD = "Lbfgs.C";;
+  DEFINE FIRST = 0;;
+  DEFINE LAST(n) = n - 1;;
+  INCLUDE "src/lbfgs_FC.ml";;
+end
 
 (* Local Variables: *)
 (* compile-command: "make -k -C .." *)

@@ -1,7 +1,7 @@
 
 open Printf
 open Bigarray
-type vec = fortran_layout Lbfgs.vec
+type vec = Lbfgs.F.vec
 
 let f_df (x: vec) (g: vec) =
   let n = Array1.dim x in
@@ -34,5 +34,5 @@ let () =
   let u = Array1.create float64 fortran_layout n in
   Array1.fill u 100.;
 
-  let f = Lbfgs.min f_df x ~l ~u ~corrections:5 ~print:(Lbfgs.Every 1) in
+  let f = Lbfgs.F.min f_df x ~l ~u ~corrections:5 ~print:(Lbfgs.Every 1) in
   printf "min = %g\n" f

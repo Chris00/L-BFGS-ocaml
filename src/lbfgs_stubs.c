@@ -27,11 +27,14 @@
 
 #define FUN(name) ocaml_lbfgs_ ## name
 
-/* Fetch vector parameters from bigarray */
+/* Fetch vector parameters from bigarray. BEWARE: C-style offsets. */
 #define VEC_PARAMS(V) \
   struct caml_ba_array *big_##V = Caml_ba_array_val(v##V); \
   integer dim_##V = *big_##V->dim; \
-  double *V##_data = ((double *) big_##V->data) /*+ (Long_val(vOFS##V) - 1)*/
+  double *V##_data = ((double *) big_##V->data) + Long_val(vOFS##V)
+
+#define VEC_DATA_OFS(V) \
+  ((double *) Caml_ba_array_val(v##V)->data) + Long_val(vOFS##V)
 
 #define VEC_DATA(V) \
   ((double *) Caml_ba_array_val(v##V)->data)
@@ -72,7 +75,9 @@ extern void setulb_(integer *n,        /* dimension of the problem */
                     doublereal *dsave);
 
 CAMLexport
-value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
+value ocaml_lbfgs_setulb(value vm, value vOFSx, value vx,
+                         value vOFSl, value vl, value vOFSu, value vu,
+                         value vnbd,
                          value vf, value vg, value vfactr, value vpgtol,
                          value vwa, value viwa, value vtask, value viprint,
                          value vcsave, value vlsave, value visave,
@@ -86,7 +91,7 @@ value ocaml_lbfgs_setulb(value vm, value vx, value vl, value vu, value vnbd,
   integer iprint = Int_val(viprint);
 
   setulb_(&dim_x, PTR_INT(m),
-          x_data, VEC_DATA(l), VEC_DATA(u), INT_VEC_DATA(nbd),
+          x_data, VEC_DATA_OFS(l), VEC_DATA_OFS(u), INT_VEC_DATA(nbd),
           &f, VEC_DATA(g), &factr, &pgtol, VEC_DATA(wa), INT_VEC_DATA(iwa),
           String_val(vtask), /* shared content with OCaml */
           PTR_INT(iprint), String_val(vcsave),
@@ -101,6 +106,6 @@ value ocaml_lbfgs_setulb_bc(value * argv, int argn)
   return ocaml_lbfgs_setulb(
     argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6],
     argv[7], argv[8], argv[9], argv[10], argv[11], argv[12], argv[13],
-    argv[14], argv[15], argv[16]);
+    argv[14], argv[15], argv[16], argv[17], argv[18], argv[19]);
 }
 

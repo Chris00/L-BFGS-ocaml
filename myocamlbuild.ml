@@ -476,8 +476,9 @@ dispatch
     dispatch_default;
     begin function
     | After_rules ->
-      let f77 = "src" / "Lbfgsb.2.1" in
-      dep ["c"; "compile"] ["src" / "f2c.h"; f77 / "routines.f" ];
+      dep ["ocaml"; "compile"] ["src"/"lbfgs_FC.ml"];
+      dep ["c"; "compile"] ["src" / "f2c.h";
+                            "src" / "Lbfgsb.2.1" / "routines.f" ];
       if big_endian64 then
         flag ["c"; "compile"] (S[A"-ccopt"; A"-DBIG_ENDIAN64"]);
 
