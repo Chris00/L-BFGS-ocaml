@@ -89,7 +89,8 @@ sig
     [u.(i)] to [infinity] to indicate that no upper bound is desired.
     Default: no upper bounds.
 
-    @param n the dimension of the space of unknowns.  Default: [dim x].
+    @param n the dimension of the space of unknowns.
+    Default: [dim x - ofsx + 1].
     @param ofsl offset for the matrix [l].  Default: [1].
     @param ofsu offset for the matrix [u].  Default: [1].
     @param ofsx offset for the matrix [x].  Default: [1].
@@ -134,7 +135,7 @@ sig
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
     (vec -> vec -> float) -> ?ofsx:int -> vec -> float
   (** See {!F.min}.  Note that the default value for [ofsl], [ofsu]
-      and [ofsx] is [0]. *)
+      and [ofsx] is [0] and the one for [n] is [dim x - ofsx]. *)
 end
 
 val work : ?corrections:int -> int -> work
