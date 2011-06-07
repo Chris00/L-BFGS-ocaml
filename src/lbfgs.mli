@@ -17,8 +17,8 @@
 
 (** Binding to
     {{:http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html}L-BFGS-B}.
-    These are respectively limited-memory quasi-Newton code for
-    unconstrained optimization and for bound-constrained optimization.
+    These is a limited-memory quasi-Newton code for unconstrained and
+    for bound-constrained optimization.
 
     The authors of the original FORTRAN code expect that if you use
     their software in a publication, you quote one of these references:
