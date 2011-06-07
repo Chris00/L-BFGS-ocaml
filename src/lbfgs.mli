@@ -42,7 +42,7 @@ type work
 exception Abnormal of float * string
 (** [Abnormal(f, msg)] is raised if the routine terminated abnormally
     without being able to satisfy the termination conditions.  In such
-    an event, the variable [x] (see {!min}) will contain the current
+    an event, the variable [x] (see {!F.min}) will contain the current
     best approximation found and [f] is the value of the target
     function at [x].  [msg] is a message containing additional
     information. *)
@@ -133,14 +133,14 @@ sig
     ?n:int ->
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
     (vec -> vec -> float) -> ?ofsx:int -> vec -> float
-  (** @see {!F.min}.  Note that the default value for [ofsl], [ofsu]
+  (** See {!F.min}.  Note that the default value for [ofsl], [ofsu]
       and [ofsx] is [0]. *)
 end
 
 val work : ?corrections:int -> int -> work
 (** [work n] allocate the work space for a problem of size at most [n].
 
-    @param corrections See {!min}. *)
+    @param corrections See {!F.min}. *)
 
 
 (************************************************************************)

@@ -1,7 +1,7 @@
 #                                                               -*-conf-*-
 OASISFormat: 0.2
 Name:        lbfgs
-Version:     0.5
+Version:     0.6
 Synopsis:    Minimization of multidimensional functions on bounded or unbounded domains.
 Description: This is a binding to L-BFGS-B, a library for Large-scale
   Bound-constrained Optimization.
