@@ -27,12 +27,7 @@
 
 #define FUN(name) ocaml_lbfgs_ ## name
 
-/* Fetch vector parameters from bigarray. BEWARE: C-style offsets. */
-#define VEC_PARAMS(V) \
-  struct caml_ba_array *big_##V = Caml_ba_array_val(v##V); \
-  integer dim_##V = *big_##V->dim; \
-  double *V##_data = ((double *) big_##V->data) + Long_val(vOFS##V)
-
+/* Pointer to bigarray data.  BEWARE: C-style offsets. */
 #define VEC_DATA_OFS(V) \
   ((double *) Caml_ba_array_val(v##V)->data) + Long_val(vOFS##V)
 
@@ -75,7 +70,7 @@ extern void setulb_(integer *n,        /* dimension of the problem */
                     doublereal *dsave);
 
 CAMLexport
-value ocaml_lbfgs_setulb(value vm, value vOFSx, value vx,
+value ocaml_lbfgs_setulb(value vn, value vm, value vOFSx, value vx,
                          value vOFSl, value vl, value vOFSu, value vu,
                          value vnbd,
                          value vf, value vg, value vfactr, value vpgtol,
@@ -83,15 +78,15 @@ value ocaml_lbfgs_setulb(value vm, value vOFSx, value vx,
                          value vcsave, value vlsave, value visave,
                          value vdsave)
 {
+  integer n = Int_val(vn);
   integer m = Int_val(vm);
-  VEC_PARAMS(x);
   doublereal f = Double_val(vf);
   doublereal factr = Double_val(vfactr);
   doublereal pgtol = Double_val(vpgtol);
   integer iprint = Int_val(viprint);
 
-  setulb_(&dim_x, PTR_INT(m),
-          x_data, VEC_DATA_OFS(l), VEC_DATA_OFS(u), INT_VEC_DATA(nbd),
+  setulb_(PTR_INT(n), PTR_INT(m),
+          VEC_DATA_OFS(x), VEC_DATA_OFS(l), VEC_DATA_OFS(u), INT_VEC_DATA(nbd),
           &f, VEC_DATA(g), &factr, &pgtol, VEC_DATA(wa), INT_VEC_DATA(iwa),
           String_val(vtask), /* shared content with OCaml */
           PTR_INT(iprint), String_val(vcsave),
@@ -106,6 +101,6 @@ value ocaml_lbfgs_setulb_bc(value * argv, int argn)
   return ocaml_lbfgs_setulb(
     argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6],
     argv[7], argv[8], argv[9], argv[10], argv[11], argv[12], argv[13],
-    argv[14], argv[15], argv[16], argv[17], argv[18], argv[19]);
+    argv[14], argv[15], argv[16], argv[17], argv[18], argv[19], argv[20]);
 }
 

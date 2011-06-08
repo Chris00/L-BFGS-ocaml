@@ -96,7 +96,7 @@ let min ?(print=No) ?work ?nsteps ?stop
     | None, Some f -> f
     | Some n, Some f -> (fun w -> Int32.to_int w.isave.{30} > n || f w) in
   while !continue do
-    f := setulb ~m:corrections ~c_ofsx ~x ~c_ofsl ~l ~c_ofsu ~u ~nbd
+    f := setulb ~n ~m:corrections ~c_ofsx ~x ~c_ofsl ~l ~c_ofsu ~u ~nbd
       ~f:!f ~g ~factr ~pgtol
       ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint:(int_of_print print)
       ~csave:w.csave ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;

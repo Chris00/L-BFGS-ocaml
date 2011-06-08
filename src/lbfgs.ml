@@ -26,7 +26,7 @@ type 'l int_vec = (int32, int32_elt, 'l) Array1.t
 type wint_vec = fortran_layout int_vec (* working int vectors *)
 
 external setulb :
-  (* n = dim(x) *)
+  n:int ->
   m:int ->
   (* BEWARE: C-style offsets *)
   c_ofsx:int -> x:'l vec ->
