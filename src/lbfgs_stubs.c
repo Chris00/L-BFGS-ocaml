@@ -37,12 +37,13 @@
 #define INT_VEC_DATA(V) \
   ((int *) Caml_ba_array_val(v##V)->data)
 
-#if defined(ARCH_SIXTYFOUR) && defined(ARCH_BIG_ENDIAN)
-/* If the integer are 64 bits, one must use to the higher bytes to
-   get the least significant part of the number. */
-#define PTR_INT(x) (integer *) (((char *) &x) + 4)
+#if defined(ARCH_INT64_TYPE) && defined(ARCH_BIG_ENDIAN)
+/* If the integer are 64 bits, one must use to the higher bytes to get
+   the least significant part of the number.  Use "int32" provided by
+   OCaml "config.h". */
+#define PTR_INT(x) (integer *) (((int32 *) &x) + 1)
 #else
-#define PTR_INT(x) &x
+#define PTR_INT(x) &x /* low bits */
 #endif
 
 
