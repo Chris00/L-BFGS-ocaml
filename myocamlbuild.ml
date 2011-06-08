@@ -469,7 +469,6 @@ let env = BaseEnvLight.load() (* setup.data *)
 
 let fortran = BaseEnvLight.var_get "fortran" env
 let fortran_lib = BaseEnvLight.var_get "fortran_library" env
-let big_endian64 = bool_of_string(BaseEnvLight.var_get "big_endian64" env)
 ;;
 dispatch
   (MyOCamlbuildBase.dispatch_combine [
@@ -479,8 +478,6 @@ dispatch
       dep ["ocaml"; "compile"] ["src"/"lbfgs_FC.ml"];
       dep ["c"; "compile"] ["src" / "f2c.h";
                             "src" / "Lbfgsb.2.1" / "routines.f" ];
-      if big_endian64 then
-        flag ["c"; "compile"] (S[A"-ccopt"; A"-DBIG_ENDIAN64"]);
 
       rule "Fortran to object" ~prod:"%.o" ~dep:"%.f"
         begin fun env _build ->
