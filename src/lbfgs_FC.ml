@@ -29,6 +29,8 @@ let nbd_of_lu n c_ofsl (lopt: vec option) c_ofsu (uopt: vec option) =
       invalid_arg(sprintf "%s.min: dim(l): valid=[%i..[ got=%i"
                     MOD min_diml (Array1.dim l));
     for i = FIRST to LAST(n) do
+      if is_nan l.{i} || l.{i} = infinity then
+        invalid_arg(sprintf "%s.min: l.{%i} = %f => empty domain" MOD i l.{i});
       nbd.{i} <- if l.{i} = neg_infinity then 0l else 1l
     done;
     (l, empty_vec, nbd)
@@ -38,6 +40,8 @@ let nbd_of_lu n c_ofsl (lopt: vec option) c_ofsu (uopt: vec option) =
       invalid_arg(sprintf "%s.min: dim(u): valid=[%i..[ got=%i"
                     MOD min_dimu (Array1.dim u));
     for i = FIRST to LAST(n) do
+      if is_nan u.{i} || u.{i} = neg_infinity then
+        invalid_arg(sprintf "%s.min: u.{%i} = %f => empty domain" MOD i u.{i});
       nbd.{i} <- if u.{i} = infinity then 0l else 3l
     done;
     (empty_vec, u, nbd)
@@ -51,6 +55,10 @@ let nbd_of_lu n c_ofsl (lopt: vec option) c_ofsu (uopt: vec option) =
       invalid_arg(sprintf "%s.min: dim(u): valid=[%i..[ got=%i"
                     MOD min_dimu (Array1.dim u));
     for i = FIRST to LAST(n) do
+      if is_nan l.{i} || l.{i} = infinity then
+        invalid_arg(sprintf "%s.min: l.{%i} = %f => empty domain" MOD i l.{i});
+      if is_nan u.{i} || u.{i} = neg_infinity then
+        invalid_arg(sprintf "%s.min: u.{%i} = %f => empty domain" MOD i u.{i});
       nbd.{i} <-
         if l.{i} = neg_infinity then (if u.{i} = infinity then 0l else 3l)
         else (if u.{i} = infinity then 1l else 2l)

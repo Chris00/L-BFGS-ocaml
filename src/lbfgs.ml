@@ -151,6 +151,8 @@ let slope w = w.dsave.{11}
 let normi_grad w = w.dsave.{13}
 let slope_init w = w.dsave.{15}
 
+let is_nan x = (x: float) <> x
+
 module F =
 struct
   type vec = (float, float64_elt, fortran_layout) Array1.t
