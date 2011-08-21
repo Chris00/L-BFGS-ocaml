@@ -43,6 +43,14 @@ Executable Rosenbrock
   Install:        false
   CompiledObject: best
 
+Executable error
+  Path:           examples/
+  MainIs:         error.ml
+  BuildDepends:   lbfgs
+  BuildTools:     ocamlbuild
+  Install:        false
+  CompiledObject: best
+
 SourceRepository trunk
   Type:       bzr
   Location:   https://forge.ocamlcore.org/anonscm/bzr/lbfgs/trunk

@@ -45,7 +45,10 @@ exception Abnormal of float * string
     an event, the variable [x] (see {!F.min}) will contain the current
     best approximation found and [f] is the value of the target
     function at [x].  [msg] is a message containing additional
-    information. *)
+    information (returned by the original FORTRAN code).
+
+    If the error message is not precise enough, it is recommended to
+    turn printing on to understand what is the problem. *)
 
 (** Control of the frequency *)
 type print =
