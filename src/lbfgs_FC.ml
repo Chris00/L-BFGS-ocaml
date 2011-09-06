@@ -111,7 +111,7 @@ let min ?(print=No) ?work ?nsteps ?stop
     match w.task.[0] with
     | 'F' (* FG *) -> f := f_df x g
     | 'C' (* CONV *) ->
-        (* the termination test in L-BFGS-B has been satisfied. *)
+      (* the termination test in L-BFGS-B has been satisfied. *)
       continue := false
     | 'A' (* ABNO *) -> raise(Abnormal(!f, extract_c_string w.task))
     | 'E' (* ERROR *) -> invalid_arg (extract_c_string w.task)
@@ -119,6 +119,20 @@ let min ?(print=No) ?work ?nsteps ?stop
     | _ -> assert false
   done;
   1. *. !f (* unbox f *)
+
+
+let max ?print ?work ?nsteps ?stop ?corrections ?factr ?pgtol
+    ?n ?ofsl ?l ?ofsu ?u f_df ?ofsx (x: vec) =
+  (* Play with -f *)
+  let neg_f_df (x: vec) (g: vec) =
+    let v = f_df x g in
+    for i = FIRST to LAST(Array1.dim g) do
+      g.{i} <- -. g.{i}
+    done;
+    -. v in
+  let v = min ?print ?work ?nsteps ?stop ?corrections ?factr ?pgtol
+    ?n ?ofsl ?l ?ofsu ?u neg_f_df ?ofsx x in
+  -. v
 
 
 (* Local Variables: *)

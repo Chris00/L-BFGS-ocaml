@@ -50,7 +50,7 @@ exception Abnormal of float * string
     If the error message is not precise enough, it is recommended to
     turn printing on to understand what is the problem. *)
 
-(** Control of the frequency *)
+(** Control of the frequency at which information is outputted. *)
 type print =
 | No    (** No output is generated. *)
 | Last  (** Print one line at the last iteration. *)
@@ -79,7 +79,7 @@ sig
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
     (vec -> vec -> float) -> ?ofsx:int -> vec -> float
 (** [min f_df x] compute the minimum of the function [f] given by
-    [f_df].  [x] is an intial estimate of the solution vector.  On
+    [f_df].  [x] is an initial estimate of the solution vector.  On
     termination, [x] will contain the best approximation found.  [f_df
     x df] is a function that computes f(x) and its gradiant f'(x),
     returns f(x) and stores f'(x) in [df].  Can raise {!Abnormal}.
@@ -124,6 +124,17 @@ sig
 
     @param print Tells the amount of debugging information desired.
     Default: [No]. *)
+
+
+  val max : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+    ?corrections:int -> ?factr:float -> ?pgtol:float ->
+    ?n:int ->
+    ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
+    (vec -> vec -> float) -> ?ofsx:int -> vec -> float
+  (** [max f_df x] computes the maximum of the function [f] given by
+      [f_df].  [x] is an initial estimate of the solution vector.  This
+      function is provided for convenience and calls {!F.min} to which
+      the reader is referred for further explanations. *)
 end
 
 (** C layout. *)
@@ -139,6 +150,14 @@ sig
     (vec -> vec -> float) -> ?ofsx:int -> vec -> float
   (** See {!F.min}.  Note that the default value for [ofsl], [ofsu]
       and [ofsx] is [0] and the one for [n] is [dim x - ofsx]. *)
+
+  val max : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+    ?corrections:int -> ?factr:float -> ?pgtol:float ->
+    ?n:int ->
+    ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
+    (vec -> vec -> float) -> ?ofsx:int -> vec -> float
+  (** See {!F.max}. Note that the default value for [ofsl], [ofsu]
+      and [ofsx] is [0] and the one for [n] is [dim x - ofsx].  *)
 end
 
 val work : ?corrections:int -> int -> work
