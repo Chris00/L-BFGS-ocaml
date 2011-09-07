@@ -1,0 +1,47 @@
+Non OCaml dependencies
+======================
+
+Since this is a binding to L-BFGS-B, you need to
+
+- download the tarball
+  http://users.eecs.northwestern.edu/~nocedal/Software/Lbfgsb.2.1.tar.gz
+  and unpack it in src/ (it will create a subdirectory Lbfgsb.2.1);
+
+- have a fortran compiler (gfortran recommended).
+
+(* OASIS_START *)
+(* DO NOT EDIT (digest: 44227d070f6745ff6e17f4daa5a160fd) *)
+This is the INSTALL file for the lbfgs distribution.
+
+This package uses OASIS to generate its build system. See section OASIS for
+full information. 
+
+Dependencies
+============
+
+In order to compile this package, you will need:
+* ocaml for all, doc API
+* findlib
+
+Installing
+==========
+
+1. Uncompress source directory and got to the root of the package
+2. Run 'ocaml setup.ml -configure'
+3. Run 'ocaml setup.ml -build'
+4. Run 'ocaml setup.ml -install'
+
+Uninstalling
+============
+
+1. Go to the root of the package 
+2. Run 'ocaml setup.ml -uninstall'
+
+OASIS
+=====
+
+OASIS is a software that helps to write setup.ml using a simple '_oasis'
+configuration file. The generated setup only depends on standard OCaml
+installation, no additional library is required.
+
+(* OASIS_STOP *)

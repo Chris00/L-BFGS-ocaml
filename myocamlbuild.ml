@@ -469,6 +469,7 @@ let env = BaseEnvLight.load() (* setup.data *)
 
 let fortran = BaseEnvLight.var_get "fortran" env
 let fortran_lib = BaseEnvLight.var_get "fortran_library" env
+let lbfgsb_ver = BaseEnvLight.var_get "lbfgsb_ver" env
 ;;
 dispatch
   (MyOCamlbuildBase.dispatch_combine [
@@ -477,7 +478,7 @@ dispatch
     | After_rules ->
       dep ["ocaml"; "compile"] ["src"/"lbfgs_FC.ml"];
       dep ["c"; "compile"] ["src" / "f2c.h";
-                            "src" / "Lbfgsb.2.1" / "routines.f" ];
+                            "src" / ("Lbfgsb." ^ lbfgsb_ver) / "routines.f" ];
 
       rule "Fortran to object" ~prod:"%.o" ~dep:"%.f"
         begin fun env _build ->
