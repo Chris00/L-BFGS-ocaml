@@ -5165,7 +5165,6 @@ let setup_t =
 let setup () = BaseSetup.setup setup_t;;
 
 (* OASIS_STOP *)
-#1 "setup.ml"
 
 open Printf
 
@@ -5183,13 +5182,21 @@ let is_substring p s =
   is_substring_loop p (String.length p) 0 s (String.length s)
 
 
-let fortran = BaseCheck.prog_best "fortran" ["gfortran"; "g95"; "g77"]
+let fortran_compilers = ["gfortran"; "g95"; "g77"]
 
-let fortran_lib =
-  if is_substring "gfortran" (fortran()) then "gfortran"
-  else ""
+let fortran_lib() =
+  try
+    let fortran = BaseCheck.prog_best "fortran" fortran_compilers () in
+    printf "***%s\n%!" fortran;
+    if is_substring "gfortran" fortran then "gfortran"
+    else ""
+  with _ ->
+    printf "Please install one of these fortran compilers: %s.\nIf you use \
+      a different compiler, send its name to the author (see _oasis file).\n%!"
+      (String.concat ", " fortran_compilers);
+    exit 1
 
-let _ = BaseEnv.var_define "fortran_library" (lazy fortran_lib)
+let _ = BaseEnv.var_define "fortran_library" (lazy(fortran_lib()))
 
 
 
