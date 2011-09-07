@@ -8,15 +8,15 @@ Description: This is a binding to L-BFGS-B, a library for Large-scale
 Authors:     Christophe Troestler
 License:     GPL-3.0
 Plugins:     META (0.2), StdFiles (0.2)
+FilesAB:     src/lbfgs.ml.ab
 Homepage:    https://forge.ocamlcore.org/projects/lbfgs/
-#PostConfCommand: ocaml configure.ml
 
 Library lbfgs
   Path:	      src/
   BuildTools: ocamlbuild
   Modules:    Lbfgs
   CSources:   lbfgs_stubs.c
-  # Lbfgsb.2.1/routines.f added via src/liblbfgs.clib
+  # Lbfgsb.*/*.f added via myocamlbuild.ml
   BuildDepends: bigarray
 
 Document API

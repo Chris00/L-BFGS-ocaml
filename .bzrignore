@@ -2,6 +2,7 @@
 *.tar.gz
 _build
 src/Lbfgsb.2.1/*
+src/Lbfgsb.3.0
 iterate.dat
 src/META
 *.odocl
@@ -12,3 +13,4 @@ src/META
 *.byte
 *.native
 API.docdir
+src/lbfgs.ml

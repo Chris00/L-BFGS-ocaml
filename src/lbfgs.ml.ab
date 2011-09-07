@@ -45,6 +45,8 @@ external setulb :
     = "ocaml_lbfgs_setulb_bc" "ocaml_lbfgs_setulb"
 (* Return the value of the function 'f'. *)
 
+let max i j = if (i: int) > j then i else j (* specialized version *)
+let min i j = if (i: int) < j then i else j
 
 type work = {
   n: int;   (* dimension of the problem used to create this work *)
@@ -59,9 +61,15 @@ type work = {
 
 let wvec ty n = Array1.create ty fortran_layout n
 
+(* The work space [wa] changes with the L-BFGS-B version.  Set it from
+   setup.ml *)
+let wa_min_size n m = ($(lbfgsb_wa_coef_n1)) * n + $(lbfgsb_wa_coef_n0)
+let wa_n_of_size s m =
+  max 0 ((s - ($(lbfgsb_wa_coef_n0))) / ($(lbfgsb_wa_coef_n1)))
+
 let unsafe_work n m =
   { n = n;
-    wa = wvec float64 ((2 * m + 4) * n + 12 * m * (m + 1));
+    wa = wvec float64 (wa_min_size n m);
     iwa = wvec int32 (3 * n);
     (* FORTRAN requires the strings to be initialized with spaces: *)
     task = String.make 60 ' ';
@@ -78,19 +86,15 @@ let work ?(corrections=10) n =
     failwith "Lbfgs.work: n must be > 0";
   unsafe_work n corrections
 
-let ceil_div n d = (n + d - 1) / d
-let max i j = if (i: int) > j then i else j (* specialized version *)
-
 (* Check that the work is large enough for the current problem. *)
 let check_work n m work =
-  if Array1.dim work.wa < (2 * m + 4) * n + 12 * m * (m + 1)
+  if Array1.dim work.wa < wa_min_size n m
     || Array1.dim work.iwa < 3 * n then
     let n_min =
-      max 1 (max (ceil_div (Array1.dim work.wa - 12 * m * (m + 1)) (2 * m + 4))
-                 (ceil_div (Array1.dim work.iwa) 3)) in
+      min (wa_n_of_size (Array1.dim work.wa) m) (Array1.dim work.iwa / 3) in
     failwith(sprintf
-               "Lbfgs.min: dim of work too small: got n = %i, valid n >= %i"
-               n n_min)
+               "Lbfgs.min: dim of work too small for problem size n = %i, \
+                valid n <= %i" n n_min)
 
 let set_start s =
   (* No final '\000' for FORTRAN *)
@@ -178,5 +182,6 @@ struct
 end
 
 (* Local Variables: *)
+(* mode: tuareg *)
 (* compile-command: "make -k -C .." *)
 (* End: *)

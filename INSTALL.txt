@@ -1,14 +1,3 @@
-Non OCaml dependencies
-======================
-
-Since this is a binding to L-BFGS-B, you need to
-
-- download the tarball
-  http://users.eecs.northwestern.edu/~nocedal/Software/Lbfgsb.2.1.tar.gz
-  and unpack it in src/ (it will create a subdirectory Lbfgsb.2.1);
-
-- have a fortran compiler (gfortran recommended).
-
 (* OASIS_START *)
 (* DO NOT EDIT (digest: 44227d070f6745ff6e17f4daa5a160fd) *)
 This is the INSTALL file for the lbfgs distribution.
@@ -45,3 +34,16 @@ configuration file. The generated setup only depends on standard OCaml
 installation, no additional library is required.
 
 (* OASIS_STOP *)
+
+Non OCaml dependencies
+======================
+
+Since this is a binding to L-BFGS-B, you need to
+
+- download the tarball
+    http://users.eecs.northwestern.edu/~nocedal/Software/Lbfgsb.2.1.tar.gz
+  or
+    http://users.eecs.northwestern.edu/~nocedal/Software/Lbfgsb.3.0.tar.gz
+  and unpack it in src/ (it will create a subdirectory Lbfgsb.*);
+
+- have a fortran compiler (gfortran recommended).

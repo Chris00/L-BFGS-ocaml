@@ -460,8 +460,7 @@ let package_default =
 let dispatch_default = MyOCamlbuildBase.dispatch_default package_default;;
 
 (* OASIS_STOP *)
-#1 "myocamlbuild.ml"
-(* Ocamlbuild_plugin.dispatch dispatch_default;; *)
+# 464 "myocamlbuild.ml"
 
 open Ocamlbuild_plugin;;
 
@@ -476,14 +475,26 @@ dispatch
     dispatch_default;
     begin function
     | After_rules ->
+      (* Select the right FORTRAN files depending on the version. *)
+      let lbfgsb =
+        if lbfgsb_ver = "2.1" then [ "src" / "Lbfgsb.2.1" / "routines.o" ]
+        else if lbfgsb_ver = "3.0" then
+          [ "src" / "Lbfgsb.3.0" / "timer.o";
+            (* FIXME: no risk of conflict with Lacaml blas? *)
+            "src" / "Lbfgsb.3.0" / "blas.o";
+            "src" / "Lbfgsb.3.0" / "linpack.o";
+            "src" / "Lbfgsb.3.0" / "lbfgsb.o" ]
+        else assert false in
       dep ["ocaml"; "compile"] ["src"/"lbfgs_FC.ml"];
-      dep ["c"; "compile"] ["src" / "f2c.h";
-                            "src" / ("Lbfgsb." ^ lbfgsb_ver) / "routines.f" ];
+      dep ["c"; "compile"] ("src" / "f2c.h" :: lbfgsb);
+
+      (* Add the correct Lbfgsb files for the detected version. *)
+      flag ["ocamlmklib"; "c"] (S(List.map (fun p -> P p) lbfgsb));
 
       rule "Fortran to object" ~prod:"%.o" ~dep:"%.f"
         begin fun env _build ->
           let f = env "%.f" and o = env "%.o" in
-          let tags = tags_of_pathname f++"compile"++"fortran" in
+          let tags = tags_of_pathname f ++ "compile"++"fortran" in
 
           let cmd = Cmd(S[A fortran; A"-c"; A"-o"; P o; A"-fPIC";
                           A"-O3"; T tags; P f ]) in
