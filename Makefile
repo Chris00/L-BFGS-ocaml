@@ -4,9 +4,9 @@ DIR = $(shell oasis query name)-$(shell oasis query version)
 TARBALL = $(DIR).tar.gz
 
 DISTFILES = AUTHORS.txt INSTALL.txt README.txt \
-  Makefile myocamlbuild.ml _oasis setup.ml _tags API.odocl \
-  src/META $(wildcard $(addprefix src/,*.ml *.mli *.clib *.mllib *.c *.h)) \
-  src/Lbfgsb.2.1/routines.f \
+  Makefile myocamlbuild.ml _oasis setup.ml _tags API.odocl src/META \
+  $(wildcard $(addprefix src/,*.ab *.ml *.mli *.clib *.mllib *.c *.h)) \
+  $(wildcard src/Lbfgsb.3.0/*.f) \
   $(wildcard examples/*.ml)
 
 .PHONY: configure all byte native doc upload-doc install uninstall reinstall

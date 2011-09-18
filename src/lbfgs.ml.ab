@@ -33,7 +33,7 @@ external setulb :
   c_ofsl:int -> l:'l vec ->
   c_ofsu:int -> u:'l vec -> nbd:'l int_vec ->
   f:float -> g:'l vec -> factr:float -> pgtol:float ->
-  wa:wvec ->      (* dim: (2m + 4)n + 12m^2 + 12m *)
+  wa:wvec ->      (* dim: depends on FORTRAN version; see [wa_min_size] *)
   iwa:wint_vec -> (* dim: 3n *)
   task:string ->  (* length: 60 *)
   iprint:int ->
