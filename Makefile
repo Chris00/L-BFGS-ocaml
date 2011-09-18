@@ -6,7 +6,7 @@ TARBALL = $(DIR).tar.gz
 DISTFILES = AUTHORS.txt INSTALL.txt README.txt \
   Makefile myocamlbuild.ml _oasis setup.ml _tags API.odocl src/META \
   $(wildcard $(addprefix src/,*.ab *.ml *.mli *.clib *.mllib *.c *.h)) \
-  $(wildcard src/Lbfgsb.3.0/*.f) \
+  $(addprefix src/Lbfgsb.3.0/, timer.f blas.f linpack.f lbfgsb.f) \
   $(wildcard examples/*.ml)
 
 .PHONY: configure all byte native doc upload-doc install uninstall reinstall

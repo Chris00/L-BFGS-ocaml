@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 3d705e8bc6e573ed2046e6048c1940f3) *)
+(* DO NOT EDIT (digest: a404b74c986ed5379670c790de17811d) *)
 module OASISGettext = struct
 # 21 "/tmp/buildd/oasis-0.2.0/src/oasis/OASISGettext.ml"
   
@@ -452,7 +452,7 @@ open Ocamlbuild_plugin;;
 let package_default =
   {
      MyOCamlbuildBase.lib_ocaml = [("src/lbfgs", ["src"])];
-     lib_c = [("lbfgs", "src/", [])];
+     lib_c = [("lbfgs", "src", [])];
      flags = [];
      }
   ;;
@@ -466,7 +466,8 @@ open Ocamlbuild_plugin;;
 
 let env = BaseEnvLight.load() (* setup.data *)
 
-let fortran = BaseEnvLight.var_get "fortran" env
+let fortran =
+  try BaseEnvLight.var_get "fortran" env with _ -> failwith "XXX"
 let fortran_lib = BaseEnvLight.var_get "fortran_library" env
 let lbfgsb_ver = BaseEnvLight.var_get "lbfgsb_ver" env
 ;;
