@@ -2,6 +2,7 @@
    several codes (especially on netlib) so one can use this library
    together with others. *)
 
+open Printf
 #load "str.cma";;
 
 let prefix = "lbfgs_"
@@ -36,7 +37,7 @@ let collect files =
 
 let substitute1 sub file =
   if Sys.file_exists file then (
-    Printf.printf "Modifying file %S%!" file;
+    printf "Modifying file %S%!" file;
     let bak = file ^ ".bak" in
     let fh = open_in file in
     let fh1 = open_out bak in
@@ -68,7 +69,7 @@ let substitute1 sub file =
       close_out fh1;
       Sys.remove file;
       Sys.rename bak file;
-      Printf.printf "\n%!";
+      printf "\n%!";
   )
 
 let substitute sub files = List.iter (substitute1 sub) files
@@ -78,5 +79,6 @@ let () =
   let protect = List.map (Filename.concat "src/Lbfgsb.3.0") protect in
   let code = "src/Lbfgsb.3.0/lbfgsb.f" in
   let fn = collect protect in
+  printf "Functions to rename: %s\n" (String.concat " " fn);
   let sub = List.map (fun n -> (Str.regexp_string n, prefix ^ n)) fn in
   substitute sub (code :: protect)
