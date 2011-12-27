@@ -82,11 +82,13 @@ sig
     ?n:int ->
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
     (vec -> vec -> float) -> ?ofsx:int -> vec -> float
-(** [min f_df x] compute the minimum of the function [f] given by
+  (** [min f_df x] compute the minimum of the function [f] given by
     [f_df].  [x] is an initial estimate of the solution vector.  On
     termination, [x] will contain the best approximation found.  [f_df
     x df] is a function that computes f(x) and its gradiant f'(x),
-    returns f(x) and stores f'(x) in [df].  Can raise {!Abnormal}.
+    returns f(x) and stores f'(x) in [df].  The [x] passed to [f_df x
+    df] is physically equal to the [x] given in [min f_df x].  Can
+    raise {!Abnormal}.
 
     @param l lower bound for each component of the vector [x].  Set
     [l.(i)] to [neg_infinity] to indicate that no lower bound is desired.

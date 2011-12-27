@@ -10,6 +10,7 @@ License:     GPL-3.0
 Plugins:     META (0.2), StdFiles (0.2)
 FilesAB:     src/lbfgs.ml.ab
 Homepage:    https://forge.ocamlcore.org/projects/lbfgs/
+PostConfCommand: ocaml rename_c_prims.ml
 
 Library lbfgs
   Path:	      src
