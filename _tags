@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 9820a56f0e3b3c10c6aab930e7627f4f)
+# DO NOT EDIT (digest: 2238ac79e159c832979229d5effda393)
 # Library lbfgs
 "src": include
 <src/lbfgs.{cma,cmxa}>: use_liblbfgs
@@ -14,7 +14,12 @@
 # Executable simple
 "examples/simple.byte": use_lbfgs
 "examples/simple.byte": pkg_bigarray
+# Executable unconstrained
+<examples/unconstrained.{native,byte}>: use_lbfgs
+<examples/unconstrained.{native,byte}>: pkg_lacaml
+<examples/unconstrained.{native,byte}>: pkg_bigarray
 <examples/*.ml{,i}>: use_lbfgs
+<examples/*.ml{,i}>: pkg_lacaml
 <examples/*.ml{,i}>: pkg_bigarray
 # OASIS_STOP
 

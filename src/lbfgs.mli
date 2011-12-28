@@ -119,9 +119,9 @@ sig
 
     @param corrections maximum number of variable metric corrections
     used to define the limited memory matrix.  Values < 3 are not
-    recommended, and large values of m can result in excessive
-    computing time.  The range 3 <= corrections <= 20 is recommended.
-    Default: [10].
+    recommended, and large values of [corrections] can result in
+    excessive computing time.  The range 3 <= [corrections] <= 20 is
+    recommended.  Default: [10].
 
     @param nsteps maximum number of steps.  Default: no limitation.
 

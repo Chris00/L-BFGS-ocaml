@@ -1,5 +1,6 @@
 #							-*-conf-unix-*-
 *.tar.gz
+*.pdf
 _build
 src/Lbfgsb.2.1/*
 src/Lbfgsb.3.0

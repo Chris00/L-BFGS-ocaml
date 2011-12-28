@@ -12,6 +12,10 @@ FilesAB:     src/lbfgs.ml.ab
 Homepage:    https://forge.ocamlcore.org/projects/lbfgs/
 PostConfCommand: ocaml rename_c_prims.ml
 
+Flag has_lacaml
+  Description: Whether the lacaml findlib package is installed.
+  Default:     false
+
 Library lbfgs
   Path:	      src
   BuildTools: ocamlbuild
@@ -51,6 +55,16 @@ Executable error
   BuildTools:     ocamlbuild
   Install:        false
   CompiledObject: best
+
+Executable unconstrained
+  Build$:         flag(has_lacaml)
+  Path:           examples/
+  MainIs:         unconstrained.ml
+  BuildDepends:   lbfgs, lacaml
+  BuildTools:     ocamlbuild
+  Install:        false
+  CompiledObject: best
+
 
 SourceRepository trunk
   Type:       bzr
