@@ -5,6 +5,7 @@ TARBALL = $(DIR).tar.gz
 
 DISTFILES = AUTHORS.txt INSTALL.txt README.txt \
   Makefile myocamlbuild.ml _oasis setup.ml _tags API.odocl src/META \
+  rename_c_prims.ml \
   $(wildcard $(addprefix src/,*.ab *.ml *.mli *.clib *.mllib *.c *.h)) \
   $(addprefix src/Lbfgsb.3.0/, timer.f blas.f linpack.f lbfgsb.f) \
   $(wildcard examples/*.ml)
