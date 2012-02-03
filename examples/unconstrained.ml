@@ -8,7 +8,7 @@
 
 open Format
 open Bigarray
-open Lacaml.Impl.D
+open Lacaml.D
 
 type vec = Lbfgs.F.vec
 let vec a = Array1.of_array float64 fortran_layout a
