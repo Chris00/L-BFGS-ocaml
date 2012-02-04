@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: a404b74c986ed5379670c790de17811d) *)
+(* DO NOT EDIT (digest: b84d08f3041a386b48a464d7183ff2fd) *)
 module OASISGettext = struct
 # 21 "/tmp/buildd/oasis-0.2.0/src/oasis/OASISGettext.ml"
   
@@ -453,7 +453,13 @@ let package_default =
   {
      MyOCamlbuildBase.lib_ocaml = [("src/lbfgs", ["src"])];
      lib_c = [("lbfgs", "src", [])];
-     flags = [];
+     flags =
+       [
+          (["oasis_executable_unconstrained_dllpath"; "link"; "byte"],
+            [(OASISExpr.EBool true, S [A "-dllpath"; P "../src"])]);
+          (["oasis_executable_unconstrained_dllpath"; "ocamlmklib"; "c"],
+            [(OASISExpr.EBool true, S [A "-dllpath"; P "../src"])])
+       ];
      }
   ;;
 

@@ -63,7 +63,7 @@ Executable unconstrained
   BuildDepends:   lbfgs, lacaml
   BuildTools:     ocamlbuild
   Install:        false
-  CompiledObject: best
+  DllPath:        ../src
 
 
 SourceRepository trunk
