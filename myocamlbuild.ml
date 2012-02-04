@@ -487,7 +487,6 @@ dispatch
         if lbfgsb_ver = "2.1" then [ "src" / "Lbfgsb.2.1" / "routines.o" ]
         else if lbfgsb_ver = "3.0" then
           [ "src" / "Lbfgsb.3.0" / "timer.o";
-            (* FIXME: no risk of conflict with Lacaml blas? *)
             "src" / "Lbfgsb.3.0" / "blas.o";
             "src" / "Lbfgsb.3.0" / "linpack.o";
             "src" / "Lbfgsb.3.0" / "lbfgsb.o" ]
@@ -510,6 +509,7 @@ dispatch
 
       if fortran_lib <> "" then (
         let flib = (S[A"-cclib"; A("-l" ^ fortran_lib)]) in
+        flag ["ocamlmklib"]  flib;
         flag ["extension:cma"]  flib;
         flag ["extension:cmxa"] flib;
       );
