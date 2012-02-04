@@ -79,6 +79,10 @@ let () =
   let protect = List.map (Filename.concat "src/Lbfgsb.3.0") protect in
   let code = "src/Lbfgsb.3.0/lbfgsb.f" in
   let fn = collect protect in
-  printf "Functions to rename: %s\n" (String.concat " " fn);
-  let sub = List.map (fun n -> (Str.regexp_string n, prefix ^ n)) fn in
-  substitute sub (code :: protect)
+  if fn = [] then
+    printf "No functions to rename (probably done by a previous run).\n"
+  else (
+    printf "Functions to rename: %s\n" (String.concat " " fn);
+    let sub = List.map (fun n -> (Str.regexp_string n, prefix ^ n)) fn in
+    substitute sub (code :: protect)
+  )
