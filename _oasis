@@ -1,5 +1,5 @@
 #                                                               -*-conf-*-
-OASISFormat: 0.2
+OASISFormat: 0.3
 Name:        lbfgs
 Version:     0.8.3
 Synopsis:    Minimization of multidimensional functions on bounded or unbounded domains.
