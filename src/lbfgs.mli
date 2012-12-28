@@ -121,7 +121,8 @@ sig
     used to define the limited memory matrix.  Values < 3 are not
     recommended, and large values of [corrections] can result in
     excessive computing time.  The range 3 <= [corrections] <= 20 is
-    recommended.  Default: [10].
+    recommended.  Default: [10].  This value in called [M] in L-BFGS-B
+    debugging output.
 
     @param nsteps maximum number of steps.  Default: no limitation.
 
