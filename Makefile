@@ -33,7 +33,7 @@ dist tar: setup.ml
 	for f in $(DISTFILES); do \
 	  cp -r --parents $$f $(DIR); \
 	done
-#	Generate a setuo.ml independent of oasis
+#	Generate a setup.ml independent of oasis
 	cd $(DIR) && oasis setup
 	tar -zcvf $(TARBALL) $(DIR)
 	$(RM) -r $(DIR)

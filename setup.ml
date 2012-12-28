@@ -43,8 +43,8 @@ let lbfgsb_ver =
   else if Sys.file_exists "src/Lbfgsb.2.1/routines.f" then "2.1"
   else (
     printf "You must download the fortran code from\n\
-      http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html\n\
-    and unpack it in src/";
+            http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html\n\
+            and unpack it in src/";
     exit 1
   )
 
