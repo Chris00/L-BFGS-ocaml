@@ -3,8 +3,7 @@ WEB = lbfgs.forge.ocamlcore.org:/home/groups/lbfgs/htdocs/
 DIR = $(shell oasis query name)-$(shell oasis query version)
 TARBALL = $(DIR).tar.gz
 
-DISTFILES = AUTHORS.txt INSTALL.txt README.txt \
-  Makefile myocamlbuild.ml _oasis setup.ml _tags API.odocl src/META \
+DISTFILES = INSTALL.txt Makefile myocamlbuild.ml _oasis setup.ml _tags \
   rename_c_prims.ml \
   $(wildcard $(addprefix src/,*.ab *.ml *.mli *.clib *.mllib *.c *.h)) \
   $(addprefix src/Lbfgsb.3.0/, timer.f blas.f linpack.f lbfgsb.f) \
