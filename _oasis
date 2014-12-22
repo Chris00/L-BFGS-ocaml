@@ -22,7 +22,7 @@ Library lbfgs
   Modules:    Lbfgs
   CSources:   lbfgs_stubs.c
   # Lbfgsb.*/*.f added via myocamlbuild.ml
-  BuildDepends: bigarray
+  BuildDepends: bigarray, bytes
 
 Document API
   Title:           API reference for Lbfgs

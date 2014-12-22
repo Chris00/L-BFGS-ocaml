@@ -108,7 +108,7 @@ let min ?(print=No) ?work ?nsteps ?stop
       ~f:!f ~g ~factr ~pgtol
       ~wa:w.wa ~iwa:w.iwa ~task:w.task ~iprint:(int_of_print print)
       ~csave:w.csave ~lsave:w.lsave ~isave:w.isave ~dsave:w.dsave;
-    match w.task.[0] with
+    match Bytes.get w.task 0 with
     | 'F' (* FG *) -> f := f_df x g
     | 'C' (* CONV *) ->
       (* the termination test in L-BFGS-B has been satisfied. *)

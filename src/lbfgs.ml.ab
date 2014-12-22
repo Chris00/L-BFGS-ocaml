@@ -35,9 +35,9 @@ external setulb :
   f:float -> g:'l vec -> factr:float -> pgtol:float ->
   wa:wvec ->      (* dim: depends on FORTRAN version; see [wa_min_size] *)
   iwa:wint_vec -> (* dim: 3n *)
-  task:string ->  (* length: 60 *)
+  task:Bytes.t ->  (* length: 60 *)
   iprint:int ->
-  csave:string -> (* length: 60 *)
+  csave:Bytes.t -> (* length: 60 (working string) *)
   lsave:wint_vec -> (* logical working array of dimension 4 *)
   isave:wint_vec -> (* dim: 44 *)
   dsave:wvec ->   (* dim: 29 *)
@@ -52,8 +52,8 @@ type work = {
   n: int;   (* dimension of the problem used to create this work *)
   wa: wvec;
   iwa: wint_vec;
-  task: string;
-  csave: string;
+  task: Bytes.t;
+  csave: Bytes.t;
   lsave: wint_vec;
   isave: wint_vec;
   dsave: wvec;
@@ -72,8 +72,8 @@ let unsafe_work n m =
     wa = wvec float64 (wa_min_size n m);
     iwa = wvec int32 (3 * n);
     (* FORTRAN requires the strings to be initialized with spaces: *)
-    task = String.make 60 ' ';
-    csave = String.make 60 ' ';
+    task = Bytes.make 60 ' ';
+    csave = Bytes.make 60 ' ';
     lsave = wvec int32 4;
     isave = wvec int32 44;
     dsave = wvec float64 29;
@@ -98,20 +98,22 @@ let check_work n m work =
 
 let set_start s =
   (* No final '\000' for FORTRAN *)
-  s.[0] <- 'S'; s.[1] <- 'T'; s.[2] <- 'A'; s.[3] <- 'R'; s.[4] <- 'T'
+  Bytes.set s 0 'S';  Bytes.set s 1 'T';  Bytes.set s 2 'A';
+  Bytes.set s 3 'R';  Bytes.set s 4 'T'
 
 exception Abnormal of float * string;;
 
+let is_space c =
+  c = ' ' || c = '\t' || c = '\n'
 
 let rec strip_final_spaces s i =
   if i <= 0 then ""
-  else if s.[i] = ' ' || s.[i] = '\t' || s.[i] = '\n' then
-    strip_final_spaces s (i - 1)
-  else String.sub s 0 i
+  else if is_space (Bytes.get s i) then strip_final_spaces s (i - 1)
+  else Bytes.sub_string s 0 i
 
 let extract_c_string s =
-  try strip_final_spaces s (String.index s '\000')
-  with Not_found -> strip_final_spaces s (String.length s - 1)
+  try strip_final_spaces s (Bytes.index s '\000')
+  with Not_found -> strip_final_spaces s (Bytes.length s - 1)
 
 type print =
 | No
