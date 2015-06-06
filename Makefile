@@ -4,7 +4,7 @@ DIR = $(shell oasis query name)-$(shell oasis query version)
 TARBALL = $(DIR).tar.gz
 
 DISTFILES = INSTALL.txt Makefile myocamlbuild.ml _oasis setup.ml _tags \
-  rename_c_prims.ml \
+  rename_c_prims.ml _opam \
   $(wildcard $(addprefix src/,*.ab *.ml *.mli *.clib *.mllib *.c *.h)) \
   $(addprefix src/Lbfgsb.3.0/, timer.f blas.f linpack.f lbfgsb.f) \
   $(wildcard examples/*.ml)

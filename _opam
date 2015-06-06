@@ -1,0 +1,4 @@
+depexts: [
+  [["debian"] ["gfortran"]]
+  [["ubuntu"] ["gfortran"]]
+]
