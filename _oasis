@@ -1,5 +1,5 @@
 #                                                               -*-conf-*-
-OASISFormat: 0.3
+OASISFormat: 0.4
 Name:        lbfgs
 Version:     0.8.6
 Synopsis:    Minimization of multidimensional functions on bounded or unbounded domains.
@@ -7,7 +7,7 @@ Description: This is a binding to L-BFGS-B, a library for Large-scale
   Bound-constrained Optimization.
 Authors:     Christophe Troestler <Christophe.Troestler@umons.ac.be>
 License:     LGPL-3.0 with OCaml linking exception
-Plugins:     META (0.3), StdFiles (0.3)
+Plugins:     META (0.4), StdFiles (0.4)
 FilesAB:     src/lbfgs.ml.ab
 Homepage:    https://github.com/Chris00/L-BFGS-ocaml
 PostConfCommand: ocaml rename_c_prims.ml
@@ -26,7 +26,7 @@ Library lbfgs
 
 Document API
   Title:           API reference for Lbfgs
-  Type:            OCamlbuild (0.3)
+  Type:            OCamlbuild (0.4)
   InstallDir:      $docdir/api
   BuildTools:      ocamldoc, ocamlbuild
   XOCamlbuildPath: .
