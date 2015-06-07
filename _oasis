@@ -9,7 +9,7 @@ Authors:     Christophe Troestler <Christophe.Troestler@umons.ac.be>
 License:     LGPL-3.0 with OCaml linking exception
 Plugins:     META (0.3), StdFiles (0.3)
 FilesAB:     src/lbfgs.ml.ab
-Homepage:    https://forge.ocamlcore.org/projects/lbfgs/
+Homepage:    https://github.com/Chris00/L-BFGS-ocaml
 PostConfCommand: ocaml rename_c_prims.ml
 
 Flag has_lacaml
@@ -66,7 +66,7 @@ Executable unconstrained
   DllPath:        ../src
 
 
-SourceRepository trunk
+SourceRepository origin
   Type:       git
-  Location:   http://forge.ocamlcore.org/anonscm/git/lbfgs/lbfgs.git
-  Browser:    https://forge.ocamlcore.org/scm/browser.php?group_id=245
+  Location:   https://github.com/Chris00/L-BFGS-ocaml.git
+  Browser:    https://github.com/Chris00/L-BFGS-ocaml
