@@ -12,7 +12,7 @@ FilesAB:     src/lbfgs.ml.ab
 Homepage:    https://github.com/Chris00/L-BFGS-ocaml
 PostConfCommand: ocaml rename_c_prims.ml
 
-Flag has_lacaml
+Flag lacaml
   Description: Whether the lacaml findlib package is installed.
   Default:     false
 
@@ -57,7 +57,7 @@ Executable error
   CompiledObject: best
 
 Executable unconstrained
-  Build$:         flag(has_lacaml)
+  Build$:         flag(lacaml)
   Path:           examples/
   MainIs:         unconstrained.ml
   BuildDepends:   lbfgs, lacaml
