@@ -17,8 +17,11 @@ configure: setup.data
 setup.data: setup.ml
 	ocaml setup.ml -configure --enable-lacaml
 
-setup.ml: _oasis
+setup.ml: _oasis opam/opam
 	oasis setup -setup-update dynamic
+
+opam/opam: _oasis
+	oasis2opam --local
 
 doc install uninstall reinstall: all
 	ocaml setup.ml -$@
