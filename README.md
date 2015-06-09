@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Chris00/L-BFGS-ocaml.svg?branch=master)](https://travis-ci.org/Chris00/L-BFGS-ocaml)
+
 OCaml bindings for L-BFGS
 =========================
 
