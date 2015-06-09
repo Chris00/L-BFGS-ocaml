@@ -6,10 +6,10 @@ open Ocamlbuild_plugin;;
 
 let env = BaseEnvLight.load() (* setup.data *)
 
-let fortran =
-  try BaseEnvLight.var_get "fortran" env with _ -> failwith "XXX"
+let fortran = try BaseEnvLight.var_get "fortran" env with _ -> failwith "XXX"
 let fortran_lib = BaseEnvLight.var_get "fortran_library" env
 let lbfgsb_ver = BaseEnvLight.var_get "lbfgsb_ver" env
+let fortran_location = BaseEnvLight.var_get "fortran_lib_location" env
 ;;
 dispatch
   (MyOCamlbuildBase.dispatch_combine [
@@ -29,7 +29,18 @@ dispatch
       dep ["c"; "compile"] ("src" / "f2c.h" :: lbfgsb);
 
       (* Add the correct Lbfgsb files for the detected version. *)
-      flag ["ocamlmklib"; "c"] (S(List.map (fun p -> P p) lbfgsb));
+      if fortran_lib <> "" then (
+        (* Link the gfortran, so that we can call this in the toplevel.*) 
+        let lib_list = [ A"-ldopt"; A("-l" ^ fortran_lib)] in
+        let lib_list =
+          if fortran_location <> "" then
+            A"-ldopt" :: A("-L"^fortran_location) :: lib_list
+          else
+            lib_list
+        in
+        flag ["ocamlmklib"; "c"] (S(List.map (fun p -> P p) lbfgsb @ lib_list));
+      ) else
+        flag ["ocamlmklib"; "c"] (S(List.map (fun p -> P p) lbfgsb));
 
       rule "Fortran to object" ~prod:"%.o" ~dep:"%.f"
         begin fun env _build ->
@@ -42,7 +53,14 @@ dispatch
         end;
 
       if fortran_lib <> "" then (
-        let flib = (S[A"-cclib"; A("-l" ^ fortran_lib)]) in
+        let lib_list = [ A"-cclib"; A("-l" ^ fortran_lib)] in
+        let lib_list =
+          if fortran_location <> "" then
+            A"-ccopt" :: A("-L"^fortran_location) :: lib_list
+          else
+            lib_list
+        in
+        let flib = S lib_list in
         flag ["ocamlmklib"]  flib;
         flag ["extension:cma"]  flib;
         flag ["extension:cmxa"] flib;
