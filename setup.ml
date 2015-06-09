@@ -64,6 +64,19 @@ let fortran_lib() =
 
 let _ = BaseEnv.var_define "fortran_library" fortran_lib
 
+let _ =
+  let is_macosx = BaseEnv.var_get "system" = "macosx" in
+  let is_gfortran = fortran_lib () = "gfortran" in
+  if is_macosx && is_gfortran then
+    let com = Printf.sprintf "gfortran --print-file-name libgfortran.dylib" in
+    let ic = Unix.open_process_in com in
+    let line = input_line ic in
+    let _ = close_in ic in
+    let location = Filename.dirname line in
+    BaseEnv.var_define "fortran_lib_location" (fun () -> location)
+  else
+    fun () -> ""
+
 let lbfgsb_ver =
   if Sys.file_exists "src/Lbfgsb.3.0/lbfgsb.f" then "3.0"
   else if Sys.file_exists "src/Lbfgsb.2.1/routines.f" then "2.1"
