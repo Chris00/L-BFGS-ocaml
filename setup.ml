@@ -68,11 +68,10 @@ let fortran_lib_location() =
   let is_macosx = BaseEnv.var_get "system" = "macosx" in
   let is_gfortran = fortran_lib () = "gfortran" in
   if is_macosx && is_gfortran then
-    let com = Printf.sprintf "gfortran --print-file-name libgfortran.dylib" in
-    let ic = Unix.open_process_in com in
-    let line = input_line ic in
-    close_in ic;
-    Filename.dirname line
+    let path = OASISExec.run_read_one_line
+                 ~ctxt:!OASISContext.default
+                 "gfortran" ["--print-file-name"; "libgfortran.dylib"] in
+    Filename.dirname path
   else
     ""
 
