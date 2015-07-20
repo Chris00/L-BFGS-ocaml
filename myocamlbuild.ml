@@ -30,7 +30,6 @@ dispatch
       dep ["c"; "compile"] ("src" / "f2c.h" :: lbfgsb);
 
       (* Add the correct Lbfgsb files for the detected version. *)
-      (* Add the correct Lbfgsb files for the detected version. *)
       if fortran_lib <> "" then (
         (* Link the gfortran, so that we can call this in the toplevel.*)
         let lib_list = [ A"-ldopt"; A("-l" ^ fortran_lib)] in
