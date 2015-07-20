@@ -1,8 +1,21 @@
 language: c
-sudo: required
-install: wget https://raw.githubusercontent.com/ocaml/ocaml-travisci-skeleton/master/.travis-opam.sh
+sudo: false
+addons:
+  apt:
+    sources:
+    - avsm
+    packages:
+    - ocaml
+    - ocaml-native-compilers
+    - opam
+    - gfortran
+
 script: bash -ex .travis-opam.sh
 env:
-  - OCAML_VERSION=3.12
-  - OCAML_VERSION=4.01
-  - OCAML_VERSION=latest
+  - OPAM_SWITCH=system
+  - OPAM_SWITCH=3.12.1
+  - OPAM_SWITCH=4.01.0
+  - OPAM_SWITCH=4.02.2
+cache:
+  directories:
+  - $HOME/.opam
