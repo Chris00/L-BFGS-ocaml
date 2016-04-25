@@ -49,7 +49,8 @@ let is_substring p s =
   is_substring_loop p (String.length p) 0 s (String.length s)
 
 
-let fortran_compilers = ["gfortran"; "g95"; "g77"]
+let fortran_compilers = ["gfortran"; "g95"; "g77";
+                         "x86_64-w64-mingw32-gfortran.exe"]
 
 let fortran_lib() =
   try
