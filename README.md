@@ -26,6 +26,13 @@ If you clone this repository, download
 and extract it in `src/` (it should create `src/Lbfgsb.3.0/`).
 Then issue `make` and `make install`.
 
+In case the right FORTRAN compiler for your platform is not
+automatically found, you can specify it explicitly by exporting the
+`fortran` variable before invoking `opam`.  For example
+
+    export fortran=/usr/bin/x86_64-w64-mingw32-gfortran.exe
+    opam install lbfgs
+
 
 Documentation
 -------------
