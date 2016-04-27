@@ -57,11 +57,8 @@ let fortran_compilers =
     let target = BaseOCamlcConfig.var_define "target" () in
     let arch, mach, os, toolset = match OASISString.nsplit target '-' with
       | [a; m; os; t] -> a, m, os, t
+      | [a; m; t] -> a, m, m, t         (* on Windows there is no os string *)
       | _ -> failwith(sprintf "target %S not understood" target) in
-    let os, toolset = match os with
-      | "linux" -> os, toolset
-      | ("mingw32" | "mingw64") -> mach, "mingw32"
-      | _ -> failwith(sprintf "OS %S not recognised" os) in
     let ext = if Sys.win32 then ".exe" else "" in
     let default = sprintf "%s-%s-%s-gfortran%s" arch os toolset ext in
     default :: fortran
