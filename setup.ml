@@ -64,7 +64,7 @@ let fortran_compilers =
     let ext = if Sys.win32 then ".exe" else "" in
     let default = sprintf "%s-%s-%s-gfortran%s" arch os toolset ext in
     default :: fortran
-  with Failure msg ->
+  with Failure msg | PropList.Not_set(_, Some msg) ->
     OASISMessage.warning ~ctxt:!OASISContext.default "%s" msg;
     fortran
 
