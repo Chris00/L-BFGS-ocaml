@@ -28,6 +28,7 @@ build-doc: [ "ocaml" "setup.ml" "-doc" ]
 depends: [
   "base-bigarray"
   "base-bytes"
+  "camlp4" {build}
   "oasis" {build & >= "0.4"}
   "ocamlbuild" {build}
   "ocamlfind" {build & >= "1.5"}
