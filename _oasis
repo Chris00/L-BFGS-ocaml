@@ -6,6 +6,7 @@ Synopsis:    Minimization of multidimensional functions on bounded or unbounded 
 Description: This is a binding to L-BFGS-B, a library for Large-scale
   Bound-constrained Optimization.
 Authors:     Christophe Troestler <Christophe.Troestler@umons.ac.be>
+Maintainers: Christophe Troestler <Christophe.Troestler@umons.ac.be>
 License:     LGPL-3.0 with OCaml linking exception
 Plugins:     META (0.4), StdFiles (0.4)
 FilesAB:     src/lbfgs.ml.ab
@@ -34,6 +35,7 @@ Document API
 
 
 Executable simple
+  Build$:         flag(tests)
   Path:           examples/
   MainIs:         simple.ml
   BuildDepends:   lbfgs
@@ -41,6 +43,7 @@ Executable simple
   Install:        false
 
 Executable Rosenbrock
+  Build$:         flag(tests)
   Path:           examples/
   MainIs:         Rosenbrock.ml
   BuildDepends:   lbfgs
@@ -49,6 +52,7 @@ Executable Rosenbrock
   CompiledObject: best
 
 Executable error
+  Build$:         flag(tests)
   Path:           examples/
   MainIs:         error.ml
   BuildDepends:   lbfgs
@@ -57,7 +61,7 @@ Executable error
   CompiledObject: best
 
 Executable unconstrained
-  Build$:         flag(lacaml)
+  Build$:         flag(lacaml) && flag(tests)
   Path:           examples/
   MainIs:         unconstrained.ml
   BuildDepends:   lbfgs, lacaml

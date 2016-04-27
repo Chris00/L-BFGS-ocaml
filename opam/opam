@@ -8,25 +8,28 @@ homepage: "https://github.com/Chris00/L-BFGS-ocaml"
 dev-repo: "https://github.com/Chris00/L-BFGS-ocaml.git"
 bug-reports: "https://github.com/Chris00/L-BFGS-ocaml/issues"
 build: [
+  ["oasis" "setup"]
   ["ocaml" "setup.ml" "-configure" "--prefix" prefix
     "--%{lacaml:enable}%-lacaml"]
   ["ocaml" "setup.ml" "-build"]
 ]
 install: ["ocaml" "setup.ml" "-install"]
+remove: [
+  ["ocamlfind" "remove" "lbfgs"]
+]
 build-test: [
+  ["oasis" "setup"]
   ["ocaml" "setup.ml" "-configure" "--enable-tests"
     "--%{lacaml:enable}%-lacaml"]
   ["ocaml" "setup.ml" "-build"]
   ["ocaml" "setup.ml" "-test"]
-]
-remove: [
-  ["ocamlfind" "remove" "lbfgs"]
 ]
 build-doc: [ "ocaml" "setup.ml" "-doc" ]
 depends: [
   "base-bigarray"
   "base-bytes"
   "oasis" {build & >= "0.4"}
+  "ocamlbuild" {build}
   "ocamlfind" {build & >= "1.5"}
 ]
 depopts: [

@@ -15,7 +15,7 @@ all byte native: setup.data
 
 configure: setup.data
 setup.data: setup.ml
-	ocaml setup.ml -configure --enable-lacaml
+	ocaml setup.ml -configure --enable-lacaml --enable-tests
 
 setup.ml: _oasis opam/opam
 	oasis setup -setup-update dynamic
