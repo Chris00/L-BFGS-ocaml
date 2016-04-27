@@ -61,7 +61,7 @@ let fortran_compilers =
       | [arch; mach; toolset] -> (* Windows, example: x86_64-w64-mingw32 *)
          arch, mach, toolset
       | _ -> failwith(sprintf "target %S not understood" target) in
-    let ext = if Sys.win32 then ".exe" else "" in
+    let ext = if Sys.os_type = "Win32" then ".exe" else "" in
     let default = sprintf "%s-%s-%s-gfortran%s" arch os toolset ext in
     default :: fortran
   with Failure msg | PropList.Not_set(_, Some msg) ->
