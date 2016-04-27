@@ -55,13 +55,12 @@ let fortran_compilers =
   try
     (* Guess name of the appropriate FORTRAN compiler for the OCaml compiler. *)
     let target = BaseOCamlcConfig.var_define "target" () in
-    let arch, mach, os, toolset = match OASISString.nsplit target '-' with
-      | [a; m; os; t] -> a, m, os, t
+    let arch, os, toolset = match OASISString.nsplit target '-' with
+      | [arch; _; os; toolset] -> (* Linux, example: x86_64-pc-linux-gnu *)
+         arch, os, toolset
+      | [arch; mach; toolset] -> (* Windows, example: x86_64-w64-mingw32 *)
+         arch, mach, toolset
       | _ -> failwith(sprintf "target %S not understood" target) in
-    let os, toolset = match os with
-      | "linux" -> os, toolset
-      | ("mingw32" | "mingw64") -> mach, "mingw32"
-      | _ -> failwith(sprintf "OS %S not recognised" os) in
     let ext = if Sys.win32 then ".exe" else "" in
     let default = sprintf "%s-%s-%s-gfortran%s" arch os toolset ext in
     default :: fortran
