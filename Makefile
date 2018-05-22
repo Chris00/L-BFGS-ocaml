@@ -27,8 +27,13 @@ dist tar: setup.ml
 lint:
 	opam lint lbfgs.opam
 
+get-lbfgs:
+	cd src && \
+	test -d Lbfgsb.3.0 || (curl http://users.iems.northwestern.edu/~nocedal/Software/Lbfgsb.3.0.tar.gz | tar zx)
+	jbuilder exec config/rename_c_prims.exe
+
 clean:
 	jbuilder clean
 
 
-.PHONY: build tests install uninstall doc dist tar lint clean
+.PHONY: build tests install uninstall doc dist tar lint get-lbfgs clean

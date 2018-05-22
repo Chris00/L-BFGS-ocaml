@@ -1,8 +1,11 @@
 #							-*-conf-unix-*-
 *.pdf
 _build
-src/Lbfgsb.2.1/*
-src/Lbfgsb.3.0
+src/Lbfgsb.3.0/Makefile
+src/Lbfgsb.3.0/OUTPUTS/
+src/Lbfgsb.3.0/README
+src/Lbfgsb.3.0/driver*
+src/Lbfgsb.3.0/x.*
 iterate.dat
 src/lbfgs.ml
 .merlin
