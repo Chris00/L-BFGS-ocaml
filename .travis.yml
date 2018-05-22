@@ -1,21 +1,27 @@
 language: c
 sudo: false
+os:
+  - linux
+  - osx
 addons:
   apt:
     sources:
     - avsm
     packages:
-    - ocaml
-    - ocaml-native-compilers
     - opam
     - gfortran
 
 script: bash -ex .travis-opam.sh
 env:
-  - OPAM_SWITCH=system
-  - OPAM_SWITCH=3.12.1
-  - OPAM_SWITCH=4.01.0
-  - OPAM_SWITCH=4.02.2
+  - OCAML_VERSION=4.06
+  - OCAML_VERSION=4.05
+  - OCAML_VERSION=4.04
+  - OCAML_VERSION=4.02
+  - OCAML_VERSION=3.12
 cache:
   directories:
   - $HOME/.opam
+
+notifications:
+  email:
+    - Christophe.Troestler@umons.ac.be

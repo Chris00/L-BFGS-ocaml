@@ -1,17 +1,9 @@
 #							-*-conf-unix-*-
-*.tar.gz
 *.pdf
 _build
 src/Lbfgsb.2.1/*
 src/Lbfgsb.3.0
 iterate.dat
-src/META
-*.odocl
-*.data
-*.log
-*.mllib
-*.clib
-*.byte
-*.native
-API.docdir
 src/lbfgs.ml
+.merlin
+*.install

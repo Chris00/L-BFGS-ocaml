@@ -1,0 +1,152 @@
+open Printf
+open Stdio
+module C = Configurator
+
+module String = struct
+  include String
+
+  (* Make sure this exists even for OCaml < 4.04.0 *)
+  let split_on_char sep s =
+    let r = ref [] in
+    let j = ref (length s) in
+    for i = length s - 1 downto 0 do
+      if unsafe_get s i = sep then begin
+        r := sub s (i + 1) (!j - i - 1) :: !r;
+        j := i
+      end
+    done;
+    sub s 0 !j :: !r
+
+  (* Naive substring detection *)
+  let rec is_substring_pos j p lenp i s lens =
+    if j >= lenp then true
+    else if i >= lens then false
+    else if p.[j] = s.[i] then is_substring_pos (j+1) p lenp (i+1) s lens
+    else false
+  let rec is_substring_loop p lenp i s lens =
+    if is_substring_pos 0 p lenp i s lens then true
+    else if i >= lens then false
+    else is_substring_loop p lenp (i+1) s lens
+  let is_substring ~sub:p s =
+    is_substring_loop p (String.length p) 0 s (String.length s)
+end
+
+module List = struct
+  include List
+
+  let rec find_map l ~f =
+    match l with
+    | [] -> None
+    | x :: l -> match f x with
+                | None -> find_map l ~f
+                | Some _ as res -> res
+end
+
+(* Adapted from Configurator — until it is exported. *)
+module Find_in_path = struct
+  let path_sep =
+    if Sys.win32 then
+      ';'
+    else
+      ':'
+
+  let get_path () =
+    match Sys.getenv "PATH" with
+    | exception Not_found -> []
+    | s -> String.split_on_char path_sep s
+
+  let exe = if Sys.win32 then ".exe" else ""
+
+  let prog_not_found prog =
+    C.die "Program %s not found in PATH" prog
+
+  let best_prog dir prog =
+    let fn = Filename.concat dir (prog ^ ".opt" ^ exe) in
+    if Sys.file_exists fn then
+      Some fn
+    else
+      let fn = Filename.concat dir (prog ^ exe) in
+      if Sys.file_exists fn then
+        Some fn
+      else
+        None
+
+  let find_ocaml_prog prog =
+    match
+      List.find_map (get_path ()) ~f:(fun dir ->
+          best_prog dir prog)
+    with
+    | None -> prog_not_found prog
+    | Some fn -> fn
+
+  let find prog =
+    List.find_map (get_path ()) ~f:(fun dir ->
+        let fn = Filename.concat dir (prog ^ exe) in
+        if Sys.file_exists fn then Some fn else None)
+end
+
+
+let has_header c h =
+  try ignore(C.C_define.import c ~includes:[h] []); true
+  with _ (* Fail to compile *) -> false
+
+let fortran_compilers c =
+  let fortran = ["gfortran"; "g95"; "g77"] in
+  match C.ocaml_config_var c "target" with
+  | Some target ->
+     let arch, os, toolset = match String.split_on_char '-' target with
+       | [arch; _; os; toolset] -> (* Linux, example: x86_64-pc-linux-gnu *)
+          arch, os, toolset
+       | [arch; mach; toolset] -> (* Windows, example: x86_64-w64-mingw32 *)
+          arch, mach, toolset
+       | _ -> C.die "target %S not understood" target in
+     let ext = if Sys.os_type = "Win32" then ".exe" else "" in
+     sprintf "%s-%s-%s-gfortran%s" arch os toolset ext
+     :: fortran
+  | None -> fortran
+
+let fortran c =
+  let fortran_compilers = fortran_compilers c in
+  match List.find_map fortran_compilers ~f:Find_in_path.find with
+  | Some fortran -> fortran
+  | None -> C.die "Please install one of these fortran compilers: %s.\n\
+                   If you use a different compiler, send its name to the \
+                   author (see `opam show lbfgs`).\n%!"
+              (String.concat ", " fortran_compilers)
+
+let lbfgs_ver = "3.0"
+  (* if Sys.file_exists "src/Lbfgsb.3.0/lbfgsb.f" then "3.0"
+   * else if Sys.file_exists "src/Lbfgsb.2.1/routines.f" then "2.1"
+   * else C.die "You must download the fortran code from\n\
+   *             http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html\n\
+   *             and unpack it in src/" *)
+
+let () =
+  let coef_n0 = (* function of [m] *)
+    match lbfgs_ver with
+    | "2.1" -> "12 * m * (m + 1)"
+    | "3.0" -> "m * (11 * m + 8)"
+    | _ -> assert false in
+  let coef_n1 = (* function of [m] *)
+    match lbfgs_ver with
+    | "2.1" -> "(2 * m + 4)"
+    | "3.0" -> "(2 * m + 5)"
+    | _ -> assert false in
+  Out_channel.write_all "camlp4.txt"
+    ~data:(sprintf "-DCOEF_N0\n%s\n-D\nCOEF_N1\n%s\n" coef_n0 coef_n1)
+
+let conf c =
+  let fortran = fortran c in
+  let cflags = if has_header c "lbfgs.h" then []
+               else [] in
+  let clibs = if String.is_substring "gfortran" fortran then ["-lgfortran"]
+              else [] in
+  cflags, clibs
+
+let () =
+  let c = C.create "lbfgs" in
+  let cflags, clibs = conf c in
+  let write_sexp file sexp =
+    Out_channel.write_all file ~data:(Base.Sexp.to_string sexp) in
+  write_sexp "c_flags.sexp" Base.(sexp_of_list sexp_of_string cflags);
+  write_sexp "c_library_flags.sexp" Base.(sexp_of_list sexp_of_string clibs)

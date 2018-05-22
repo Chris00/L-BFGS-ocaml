@@ -39,7 +39,7 @@ Documentation
 
 If you cloned this repository, issue
 
-    ocaml setup.ml -doc
+    jbuilder build @doc
 
 You can also consult it
-[online](http://lbfgs.forge.ocamlcore.org/API.docdir/Lbfgs.html).
+[online](https://Chris00.github.io/L-BFGS-ocaml/doc).
