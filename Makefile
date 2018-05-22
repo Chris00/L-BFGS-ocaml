@@ -1,9 +1,6 @@
 
 build:
-	jbuilder build @install #--dev
-
-tests:
-	jbuilder build runtest
+	jbuilder build @install @runtest #--dev
 
 install uninstall:
 	jbuilder $@

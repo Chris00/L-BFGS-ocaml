@@ -145,11 +145,12 @@ let conf c =
     else [] in
   let clibs = if is_gfortran then "-lgfortran" :: clibs else clibs in
   let cflags = [] in
-  cflags, clibs
+  fortran, cflags, clibs
 
 let () =
   let c = C.create "lbfgs" in
-  let cflags, clibs = conf c in
+  let fortran, cflags, clibs = conf c in
+  Out_channel.write_all "fortranc.txt" fortran;
   let write_sexp file sexp =
     Out_channel.write_all file ~data:(Base.Sexp.to_string sexp) in
   write_sexp "c_flags.sexp" Base.(sexp_of_list sexp_of_string cflags);
