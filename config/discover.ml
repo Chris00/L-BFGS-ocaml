@@ -85,6 +85,26 @@ module Find_in_path = struct
         if Sys.file_exists fn then Some fn else None)
 end
 
+(* Inspired from Dune/Jbuilder — until it is exported. *)
+let run cmd =
+  let stdout_fn = Filename.temp_file "stdout-" ".bin" in
+  let stderr_fn = Filename.temp_file "stderr-" ".bin" in
+  let exit_code =
+    Printf.ksprintf
+      Sys.command "cd %s && %s > %s 2> %s"
+      (Filename.quote (Filename.get_temp_dir_name()))
+      cmd
+      (Filename.quote stdout_fn)
+      (Filename.quote stderr_fn)
+  in
+  let stdout = In_channel.read_all stdout_fn in
+  let stderr = In_channel.read_all stderr_fn in
+  Sys.remove stdout_fn;
+  Sys.remove stderr_fn;
+  if exit_code <> 0 then
+    C.die "Command %s terminated with code %d." cmd exit_code;
+  (stdout, stderr)
+
 
 let has_header c h =
   try ignore(C.C_define.import c ~includes:[h] []); true
@@ -127,10 +147,15 @@ let () =
 
 let conf c =
   let fortran = fortran c in
-  let cflags = if has_header c "lbfgs.h" then []
-               else [] in
-  let clibs = if String.is_substring "gfortran" fortran then ["-lgfortran"]
-              else [] in
+  let is_gfortran = String.is_substring "gfortran" fortran in
+  let system = C.ocaml_config_var_exn c "system" in
+  let clibs =
+    if system = "macosx" && is_gfortran then
+      let stdout, _ = run "gfortran --print-file-name libgfortran.dylib" in
+      ["-L" ^ Filename.dirname stdout]
+    else [] in
+  let clibs = if is_gfortran then "-lgfortran" :: clibs else clibs in
+  let cflags = [] in
   cflags, clibs
 
 let () =
