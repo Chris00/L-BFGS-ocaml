@@ -1,35 +1,16 @@
-WEB = lbfgs.forge.ocamlcore.org:/home/groups/lbfgs/htdocs/
 
-DIR = $(shell oasis query name)-$(shell oasis query version)
-TARBALL = $(DIR).tar.gz
+build:
+	jbuilder build @install @runtest #--dev
 
-DISTFILES = INSTALL.txt Makefile myocamlbuild.ml _oasis setup.ml _tags \
-  rename_c_prims.ml _opam \
-  $(wildcard $(addprefix src/,*.ab *.ml *.mli *.clib *.mllib *.c *.h)) \
-  $(addprefix src/Lbfgsb.3.0/, timer.f blas.f linpack.f lbfgsb.f) \
-  $(wildcard examples/*.ml)
+install uninstall:
+	jbuilder $@
 
-.PHONY: configure all byte native doc upload-doc install uninstall reinstall
-all byte native: setup.data
-	ocaml setup.ml -build
+doc:
+	sed -e 's/%%VERSION%%/$(PKGVERSION)/' src/lbfgs.mli \
+	  > _build/default/src/lbfgs.mli
+	jbuilder build @doc
+	echo '.def { background: #f9f9de; }' >> _build/default/_doc/odoc.css
 
-configure: setup.data
-setup.data: setup.ml
-	ocaml setup.ml -configure --enable-lacaml --enable-tests
-
-setup.ml: _oasis opam/opam
-	oasis setup -setup-update dynamic
-
-opam/opam: _oasis
-	oasis2opam --local
-
-doc install uninstall reinstall: all
-	ocaml setup.ml -$@
-
-upload-doc: doc
-	scp -C -p -r _build/API.docdir $(WEB)
-
-.PHONY: dist tar
 dist tar: setup.ml
 	mkdir -p $(DIR)
 	for f in $(DISTFILES); do \
@@ -40,11 +21,16 @@ dist tar: setup.ml
 	tar -zcvf $(TARBALL) $(DIR)
 	$(RM) -r $(DIR)
 
-.PHONY: clean distclean
-clean: setup.ml
-	ocaml setup.ml -clean
-	$(RM) $(TARBALL) iterate.dat setup.data
+lint:
+	opam lint lbfgs.opam
 
-distclean: setup.ml
-	ocaml setup.ml -distclean
-	$(RM) $(wildcard *.ba[0-9] *.bak *~ *.odocl)
+get-lbfgs:
+	cd src && \
+	test -d Lbfgsb.3.0 || (curl http://users.iems.northwestern.edu/~nocedal/Software/Lbfgsb.3.0.tar.gz | tar zx)
+	jbuilder exec config/rename_c_prims.exe
+
+clean:
+	jbuilder clean
+
+
+.PHONY: build tests install uninstall doc dist tar lint get-lbfgs clean

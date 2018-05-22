@@ -61,11 +61,16 @@ type work = {
 
 let wvec ty n = Array1.create ty fortran_layout n
 
-(* The work space [wa] changes with the L-BFGS-B version.  Set it from
-   setup.ml *)
-let wa_min_size n m = ($(lbfgsb_wa_coef_n1)) * n + $(lbfgsb_wa_coef_n0)
-let wa_n_of_size s m =
-  max 0 ((s - ($(lbfgsb_wa_coef_n0))) / ($(lbfgsb_wa_coef_n1)))
+(* The work space [wa] changes with the L-BFGS-B version. *)
+IFDEF LBFGS3 THEN
+DEFINE COEF_N1 = (2 * m + 5)
+DEFINE COEF_N0 = m * (11 * m + 8)
+ELSE
+DEFINE COEF_N1 = (2 * m + 4)
+DEFINE COEF_N0 = 12 * m * (m + 1)
+END;;
+let wa_min_size n m = (COEF_N1) * n + (COEF_N0)
+let wa_n_of_size s m = max 0 ((s - (COEF_N0)) / (COEF_N1))
 
 let unsafe_work n m =
   { n = n;
@@ -168,7 +173,7 @@ struct
   DEFINE MOD = "Lbfgs.F";;
   DEFINE FIRST = 1;;
   DEFINE LAST(n) = n;;
-  INCLUDE "src/lbfgs_FC.ml";; (* ocamlbuild compiles from ".." *)
+  INCLUDE "lbfgs_FC.p4.ml";; (* ocamlbuild compiles from ".." *)
 end
 
 module C =
@@ -180,7 +185,7 @@ struct
   DEFINE MOD = "Lbfgs.C";;
   DEFINE FIRST = 0;;
   DEFINE LAST(n) = n - 1;;
-  INCLUDE "src/lbfgs_FC.ml";;
+  INCLUDE "lbfgs_FC.p4.ml";;
 end
 
 (* Local Variables: *)
