@@ -26,6 +26,13 @@ depends: [
 depexts: [
   [["debian"] ["gfortran"]]
   [["ubuntu"] ["gfortran"]]
+  [["alpine"] ["gfortran"]]
+  [["centos"] ["gcc-gfortran"]]
+  [["fedora"] ["gcc-gfortran"]]
+  [["mageia"] ["gcc-gfortran"]]
+  [["rhel"]   ["gcc-gfortran"]]
+  [["opensuse"] ["gcc-gfortran"]]
+  [["freebsd"] ["gcc"]]
   [["cygwin"] ["mingw64-x86_64-gcc-fortran"]]
   [["osx" "homebrew"] ["gcc"]]
 ]
