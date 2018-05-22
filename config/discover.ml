@@ -134,17 +134,6 @@ let fortran c =
                    author (see `opam show lbfgs`).\n%!"
               (String.concat ", " fortran_compilers)
 
-let lbfgs_ver = "3.0"
-  (* if Sys.file_exists "src/Lbfgsb.3.0/lbfgsb.f" then "3.0"
-   * else if Sys.file_exists "src/Lbfgsb.2.1/routines.f" then "2.1"
-   * else C.die "You must download the fortran code from\n\
-   *             http://users.eecs.northwestern.edu/~nocedal/lbfgsb.html\n\
-   *             and unpack it in src/" *)
-
-let () =
-  Out_channel.write_all "camlp4.txt"
-    ~data:(if lbfgs_ver = "3.0" then "-DLBFGS3" else "")
-
 let conf c =
   let fortran = fortran c in
   let is_gfortran = String.is_substring "gfortran" fortran in
