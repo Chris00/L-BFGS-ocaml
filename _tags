@@ -1,5 +1,0 @@
-# OASIS_START
-# OASIS_STOP
-
-true: annot, safe_string
-<src/lbfgs.ml>: syntax_camlp4o, pkg_camlp4.macro

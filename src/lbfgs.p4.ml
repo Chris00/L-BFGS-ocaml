@@ -61,8 +61,14 @@ type work = {
 
 let wvec ty n = Array1.create ty fortran_layout n
 
-(* The work space [wa] changes with the L-BFGS-B version.  Set it from
-   setup.ml *)
+(* The work space [wa] changes with the L-BFGS-B version. *)
+IFDEF LBFGS3 THEN
+DEFINE COEF_N1 = (2 * m + 5)
+DEFINE COEF_N0 = m * (11 * m + 8)
+ELSE
+DEFINE COEF_N1 = (2 * m + 4)
+DEFINE COEF_N0 = 12 * m * (m + 1)
+END;;
 let wa_min_size n m = (COEF_N1) * n + (COEF_N0)
 let wa_n_of_size s m = max 0 ((s - (COEF_N0)) / (COEF_N1))
 

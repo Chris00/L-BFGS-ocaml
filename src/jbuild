@@ -13,9 +13,9 @@
 (rule
  ((targets (lbfgs.ml))
   (deps    (lbfgs.p4.ml lbfgs_FC.p4.ml))
-  (action  (run ocamlrun camlp4o ${read-lines:camlp4.txt}
-             -parser Camlp4MacroParser
-             -printer Camlp4OCamlPrinter ${<} -o ${@}))))
+  (action  (run ocamlrun camlp4o -parser Camlp4MacroParser
+            ${read-lines:camlp4.txt}
+            -printer Camlp4OCamlPrinter ${<} -o ${@}))))
 
 (rule
  ((targets (c_flags.sexp c_library_flags.sexp camlp4.txt))

@@ -122,18 +122,8 @@ let lbfgs_ver = "3.0"
    *             and unpack it in src/" *)
 
 let () =
-  let coef_n0 = (* function of [m] *)
-    match lbfgs_ver with
-    | "2.1" -> "12 * m * (m + 1)"
-    | "3.0" -> "m * (11 * m + 8)"
-    | _ -> assert false in
-  let coef_n1 = (* function of [m] *)
-    match lbfgs_ver with
-    | "2.1" -> "(2 * m + 4)"
-    | "3.0" -> "(2 * m + 5)"
-    | _ -> assert false in
   Out_channel.write_all "camlp4.txt"
-    ~data:(sprintf "-DCOEF_N0\n%s\n-D\nCOEF_N1\n%s\n" coef_n0 coef_n1)
+    ~data:(if lbfgs_ver = "3.0" then "-DLBFGS3" else "")
 
 let conf c =
   let fortran = fortran c in
