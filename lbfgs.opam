@@ -31,7 +31,7 @@ depexts: [
   [["fedora"] ["gcc-gfortran"]]
   [["mageia"] ["gcc-gfortran"]]
   [["rhel"]   ["gcc-gfortran"]]
-  [["opensuse"] ["gcc-gfortran"]]
+  [["opensuse"] ["gcc-fortran"]]
   [["freebsd"] ["gcc"]]
   [["cygwin"] ["mingw64-x86_64-gcc-fortran"]]
   [["osx" "homebrew"] ["gcc"]]
