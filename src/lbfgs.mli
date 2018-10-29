@@ -34,6 +34,8 @@
     L-BFGS-B, FORTRAN routines for large scale bound constrained
     optimization (2011), to appear in ACM Transactions on
     Mathematical Software.
+
+    @version %%VERSION%%
 *)
 
 open Bigarray

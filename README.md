@@ -41,5 +41,5 @@ If you cloned this repository, issue
 
     dune build @doc
 
-You can also consult it
+You can also consult the [interface](src/lbfgs.mli) or
 [online](https://Chris00.github.io/L-BFGS-ocaml/doc).
