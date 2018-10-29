@@ -167,7 +167,6 @@ let is_nan x = (x: float) <> x
 module F =
 struct
   type vec = (float, float64_elt, fortran_layout) Array1.t
-  type layout = fortran_layout
   let layout = fortran_layout
   ;;
   DEFINE MOD = "Lbfgs.F";;
@@ -179,7 +178,6 @@ end
 module C =
 struct
   type vec = (float, float64_elt, c_layout) Array1.t
-  type layout = c_layout
   let layout = c_layout
 
   DEFINE MOD = "Lbfgs.C";;

@@ -99,7 +99,7 @@ let min ?(print=No) ?work ?nsteps ?stop
   let f = ref nan
   and g = Array1.create float64 layout n in
   let stop_at_x = match nsteps, stop with
-    | None, None -> (fun w -> false)
+    | None, None -> (fun _w -> false)
     | Some n, None -> (fun w -> Int32.to_int w.isave.{30} > n)
     | None, Some f -> f
     | Some n, Some f -> (fun w -> Int32.to_int w.isave.{30} > n || f w) in

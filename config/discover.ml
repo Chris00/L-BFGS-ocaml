@@ -1,6 +1,5 @@
 open Printf
-open Stdio
-module C = Configurator
+module C = Configurator.V1
 
 module String = struct
   include String
@@ -85,7 +84,14 @@ module Find_in_path = struct
         if Sys.file_exists fn then Some fn else None)
 end
 
-(* Inspired from Dune/Jbuilder — until it is exported. *)
+let read_file fname =
+  let buf = Buffer.create 4096 in
+  let fh = open_in_bin fname in
+  Buffer.add_channel buf fh (in_channel_length fh);
+  close_in fh;
+  Buffer.contents buf
+
+(* Inspired from Dune — until it is exported. *)
 let run cmd =
   let stdout_fn = Filename.temp_file "stdout-" ".bin" in
   let stderr_fn = Filename.temp_file "stderr-" ".bin" in
@@ -97,14 +103,13 @@ let run cmd =
       (Filename.quote stdout_fn)
       (Filename.quote stderr_fn)
   in
-  let stdout = In_channel.read_all stdout_fn in
-  let stderr = In_channel.read_all stderr_fn in
+  let stdout = read_file stdout_fn in
+  let stderr = read_file stderr_fn in
   Sys.remove stdout_fn;
   Sys.remove stderr_fn;
   if exit_code <> 0 then
     C.die "Command %s terminated with code %d." cmd exit_code;
   (stdout, stderr)
-
 
 let has_header c h =
   try ignore(C.C_define.import c ~includes:[h] []); true
@@ -136,7 +141,7 @@ let fortran c =
 
 let conf c =
   let fortran = fortran c in
-  let is_gfortran = String.is_substring "gfortran" fortran in
+  let is_gfortran = String.is_substring ~sub:"gfortran" fortran in
   let system = C.ocaml_config_var_exn c "system" in
   let clibs =
     if system = "macosx" && is_gfortran then
@@ -150,8 +155,6 @@ let conf c =
 let () =
   let c = C.create "lbfgs" in
   let fortran, cflags, clibs = conf c in
-  Out_channel.write_all "fortranc.txt" fortran;
-  let write_sexp file sexp =
-    Out_channel.write_all file ~data:(Base.Sexp.to_string sexp) in
-  write_sexp "c_flags.sexp" Base.(sexp_of_list sexp_of_string cflags);
-  write_sexp "c_library_flags.sexp" Base.(sexp_of_list sexp_of_string clibs)
+  C.Flags.write_lines "fortranc.txt" [fortran];
+  C.Flags.write_sexp "c_flags.sexp" cflags;
+  C.Flags.write_sexp "c_library_flags.sexp" clibs
