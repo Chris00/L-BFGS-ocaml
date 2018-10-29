@@ -34,3 +34,8 @@ depexts: [
   ["mingw64-x86_64-gcc-fortran"] {os = "cygwin"}
   ["gcc"] {os = "macos" & os-distribution = "homebrew"}
 ]
+synopsis: "Bound-constrainted optimization in many variables"
+description: """
+This library provide an algorithm to minimize and maximize functions
+of many variables on bounded or unbounded domains.  This is a binding
+to L-BFGS-B, a library for Large-scale Bound-constrained Optimization."""
