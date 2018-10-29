@@ -132,12 +132,16 @@ let fortran_compilers c =
 
 let fortran c =
   let fortran_compilers = fortran_compilers c in
-  match List.find_map fortran_compilers ~f:Find_in_path.find with
-  | Some fortran -> fortran
-  | None -> C.die "Please install one of these fortran compilers: %s.\n\
-                   If you use a different compiler, send its name to the \
-                   author (see `opam show lbfgs`).\n%!"
-              (String.concat ", " fortran_compilers)
+  match Sys.getenv "FORTRANC" with
+  | fortranc -> fortranc
+  | exception Not_found ->
+     match List.find_map fortran_compilers ~f:Find_in_path.find with
+     | Some fortran -> fortran
+     | None -> C.die "Please install one of these fortran compilers: %s \
+                      or define the environment variable FORTRANC.\n\
+                      If you use a different compiler, send its name to the \
+                      author (see `opam show lbfgs`).\n%!"
+                 (String.concat ", " fortran_compilers)
 
 let conf c =
   let fortran = fortran c in
