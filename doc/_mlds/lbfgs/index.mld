@@ -1,6 +1,0 @@
-{1 Library lbfgs}
-The entry point of this library is the module:
-{!module-Lbfgs}.
-{1 Library lbfgs.fortran}
-The entry point of this library is the module:
-{!module-Lbfgs_fortran}.
