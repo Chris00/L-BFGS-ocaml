@@ -19,20 +19,8 @@ depends: [
   "base-bytes"
   "camlp4" {build}
   "dune" {build}
+  "conf-gfortran" {build}
   "lacaml" {with-test}
-]
-depexts: [
-  ["gfortran"] {os-distribution = "debian"}
-  ["gfortran"] {os-distribution = "ubuntu"}
-  ["gfortran"] {os-distribution = "alpine"}
-  ["gcc-gfortran"] {os-distribution = "centos"}
-  ["gcc-gfortran"] {os-distribution = "fedora"}
-  ["gcc-gfortran"] {os-distribution = "mageia"}
-  ["gcc-gfortran"] {os-distribution = "rhel"}
-  ["gcc-fortran"] {os-distribution = "opensuse"}
-  ["gcc"] {os = "freebsd"}
-  ["mingw64-x86_64-gcc-fortran"] {os = "cygwin"}
-  ["gcc"] {os = "macos" & os-distribution = "homebrew"}
 ]
 synopsis: "Bound-constrainted optimization in many variables"
 description: """
