@@ -79,7 +79,8 @@ sig
   type vec = (float, float64_elt, fortran_layout) Array1.t
   (** Vectors. *)
 
-  val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+  val min :
+    ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
     ?corrections:int -> ?factr:float -> ?pgtol:float ->
     ?n:int ->
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
@@ -135,7 +136,8 @@ sig
     Default: [No]. *)
 
 
-  val max : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+  val max :
+    ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
     ?corrections:int -> ?factr:float -> ?pgtol:float ->
     ?n:int ->
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
@@ -152,7 +154,8 @@ sig
   type vec = (float, float64_elt, c_layout) Array1.t
   (** Vectors indexed by [0 .. n-1]. *)
 
-  val min : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+  val min :
+    ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
     ?corrections:int -> ?factr:float -> ?pgtol:float ->
     ?n:int ->
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
@@ -160,7 +163,8 @@ sig
   (** See {!F.min}.  Note that the default value for [ofsl], [ofsu]
       and [ofsx] is [0] and the one for [n] is [dim x - ofsx]. *)
 
-  val max : ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
+  val max :
+    ?print:print -> ?work:work -> ?nsteps: int -> ?stop:(state -> bool) ->
     ?corrections:int -> ?factr:float -> ?pgtol:float ->
     ?n:int ->
     ?ofsl:int -> ?l:vec -> ?ofsu:int -> ?u:vec ->
