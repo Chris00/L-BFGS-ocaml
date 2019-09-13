@@ -17,8 +17,8 @@ depends: [
   "ocaml"
   "base-bigarray"
   "base-bytes"
-  "camlp4" {build}
   "dune"
+  "cppo" {build}
   "conf-gfortran" {build}
   "lacaml" {with-test}
 ]

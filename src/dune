@@ -8,6 +8,5 @@
 
 (rule
  (targets lbfgs.ml)
- (deps    (:p lbfgs.p4.ml) lbfgs_FC.p4.ml)
- (action  (run ocamlrun camlp4o -parser Camlp4MacroParser -DLBFGS3
-               -printer Camlp4OCamlPrinter %{p} -o %{targets})))
+ (deps    (:p lbfgs.pp.ml) lbfgs_FC.pp.ml)
+ (action  (run %{bin:cppo} -D LBFGS3 %{p} -o %{targets})))

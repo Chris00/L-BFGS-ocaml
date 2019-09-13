@@ -62,13 +62,14 @@ type work = {
 let wvec ty n = Array1.create ty fortran_layout n
 
 (* The work space [wa] changes with the L-BFGS-B version. *)
-IFDEF LBFGS3 THEN
-DEFINE COEF_N1 = (2 * m + 5)
-DEFINE COEF_N0 = m * (11 * m + 8)
-ELSE
-DEFINE COEF_N1 = (2 * m + 4)
-DEFINE COEF_N0 = 12 * m * (m + 1)
-END;;
+#ifdef LBFGS3
+#define COEF_N1 (2 * m + 5)
+#define COEF_N0 m * (11 * m + 8)
+#else
+#define COEF_N1 (2 * m + 4)
+#define COEF_N0 12 * m * (m + 1)
+#endif
+
 let wa_min_size n m = (COEF_N1) * n + (COEF_N0)
 let wa_n_of_size s m = max 0 ((s - (COEF_N0)) / (COEF_N1))
 
@@ -169,21 +170,24 @@ struct
   type vec = (float, float64_elt, fortran_layout) Array1.t
   let layout = fortran_layout
   ;;
-  DEFINE MOD = "Lbfgs.F";;
-  DEFINE FIRST = 1;;
-  DEFINE LAST(n) = n;;
-  INCLUDE "lbfgs_FC.p4.ml";; (* ocamlbuild compiles from ".." *)
+  #define MOD "Lbfgs.F"
+  #define FIRST 1
+  #define LAST(n) n
+  #include "lbfgs_FC.pp.ml"
+  #undef MOD
+  #undef FIRST
+  #undef LAST
 end
 
 module C =
 struct
   type vec = (float, float64_elt, c_layout) Array1.t
   let layout = c_layout
-
-  DEFINE MOD = "Lbfgs.C";;
-  DEFINE FIRST = 0;;
-  DEFINE LAST(n) = n - 1;;
-  INCLUDE "lbfgs_FC.p4.ml";;
+  ;;
+  #define MOD "Lbfgs.C"
+  #define FIRST 0
+  #define LAST(n) n - 1
+  #include "lbfgs_FC.pp.ml"
 end
 
 (* Local Variables: *)
