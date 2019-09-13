@@ -1,3 +1,4 @@
+PKGVERSION = $(shell git describe --always --dirty)
 
 build:
 	dune build @install
@@ -7,10 +8,9 @@ install uninstall:
 	dune $@
 
 doc:
-	sed -e 's/%%VERSION%%/$(PKGVERSION)/' src/lbfgs.mli \
-	  > _build/default/src/lbfgs.mli
 	dune build @doc
-	echo '.def { background: #f9f9de; }' >> _build/default/_doc/odoc.css
+	sed -e 's/%%VERSION%%/$(PKGVERSION)/' --in-place \
+	  _build/default/_doc/_html/lbfgs/Lbfgs/index.html
 
 lint:
 	opam lint lbfgs.opam
