@@ -1,6 +1,7 @@
 
 build:
-	dune build @install @runtest
+	dune build @install
+	dune runtest --force
 
 install uninstall:
 	dune $@
