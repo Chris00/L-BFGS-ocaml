@@ -11,13 +11,13 @@ tags: [ "science" "numerics" "optimization" "minimization" "maximization"
 build: [
   ["dune" "subst"] {pinned}
   ["dune" "build" "-p" name "-j" jobs]
-  ["dune" "build" "@doc"] {with-doc}
+  ["dune" "build" "@doc" "-p" name "-j" jobs] {with-doc}
 ]
 depends: [
   "ocaml"
   "base-bigarray"
   "base-bytes"
-  "dune"
+  "dune" {>= "1.1"}
   "cppo" {build}
   "conf-gfortran" {build}
   "lacaml" {with-test}
