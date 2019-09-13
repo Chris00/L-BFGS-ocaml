@@ -11,6 +11,8 @@ let () =
   try
     let m = Lbfgs.F.min (fun u df -> df.{1} <- f' u.{1}; f u.{1}) u
       ~print:(Lbfgs.Every 1) in
-    printf "min = %g at x = %g\n" m u.{1}
+    printf "min = %g at x = %g\n" m u.{1};
+    exit 1
   with Lbfgs.Abnormal(fx, err) ->
-    printf "ERROR: %S at x = %g, f = %g\n" err u.{1} fx
+    printf "ERROR: %S at x = %g, f = %g\n" err u.{1} fx;
+    printf "(The above error is expected.)\n"
