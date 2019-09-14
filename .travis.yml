@@ -10,7 +10,7 @@ matrix:
 
 install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-      brew install gcc --enable-fortran || true;
+      brew install gcc || true;
       brew link --overwrite gcc;
     fi
   - wget https://raw.githubusercontent.com/ocaml/ocaml-ci-scripts/master/.travis-opam.sh
