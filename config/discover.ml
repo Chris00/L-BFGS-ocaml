@@ -161,4 +161,5 @@ let () =
   let fortran, cflags, clibs = conf c in
   C.Flags.write_lines "fortranc.txt" [fortran];
   C.Flags.write_sexp "c_flags.sexp" cflags;
-  C.Flags.write_sexp "c_library_flags.sexp" clibs
+  C.Flags.write_sexp "c_library_flags.sexp" clibs;
+  C.Flags.write_lines "c_library_flags.lines" clibs

@@ -11,7 +11,7 @@
 (rule
  (targets liblbfgs_fortran_stubs.a dlllbfgs_fortran_stubs.so)
  (deps    blas.o lbfgsb.o linpack.o timer.o)
- (action  (run ocamlmklib -o lbfgs_fortran_stubs %{deps})))
+ (action  (run ocamlmklib -o lbfgs_fortran_stubs %{read-lines:c_library_flags.lines} %{deps})))
 
 (rule
  (targets blas.o lbfgsb.o linpack.o timer.o)
@@ -19,6 +19,6 @@
  (action  (run %{read-lines:fortranc.txt} -c -fPIC -O3 %{deps})))
 
 (rule
- (targets c_flags.sexp c_library_flags.sexp fortranc.txt)
+ (targets c_flags.sexp c_library_flags.lines c_library_flags.sexp fortranc.txt)
  (deps ../../config/discover.exe)
  (action (run %{deps})))
