@@ -1,3 +1,9 @@
+0.9.5
+-----
+
+- Compatibility with OCaml 5 (Edwin Török).
+- Fix bug allowing to use it in the toplevel (Edwin Török).
+
 0.9.4
 -----
 
