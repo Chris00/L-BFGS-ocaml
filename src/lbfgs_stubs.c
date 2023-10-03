@@ -39,9 +39,10 @@
 
 #if defined(ARCH_INT64_TYPE) && defined(ARCH_BIG_ENDIAN)
 /* If the integer are 64 bits, one must use to the higher bytes to get
-   the least significant part of the number.  Use "int32" provided by
+   the least significant part of the number.  Use "int32_t" provided by
    OCaml "config.h". */
-#define PTR_INT(x) (integer *) (((int32 *) &x) + 1)
+#include <caml/config.h>
+#define PTR_INT(x) (integer *) (((int32_t *) &x) + 1)
 #else
 #define PTR_INT(x) &x /* low bits */
 #endif
